@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCancel() {
             super.onCancel()
-            Log.i(TAG, "node1 onCancel")
+            Log.i(TAG, "node1 onCancel ${Thread.currentThread().name}")
         }
 
         override fun onFinish() {
             super.onFinish()
-            Log.i(TAG, "node1 onFinish")
+            Log.i(TAG, "node1 onFinish ${Thread.currentThread().name}")
         }
     }
 
@@ -60,13 +60,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCancel() {
             super.onCancel()
-            Log.i(TAG, "node2 onCancel")
+            Log.i(TAG, "node2 onCancel ${Thread.currentThread().name}")
             _job?.cancel()
         }
 
         override fun onFinish() {
             super.onFinish()
-            Log.i(TAG, "node2 onFinish")
+            Log.i(TAG, "node2 onFinish ${Thread.currentThread().name}")
         }
     }
 
@@ -78,12 +78,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCancel() {
             super.onCancel()
-            Log.i(TAG, "node3 onCancel")
+            Log.i(TAG, "node3 onCancel ${Thread.currentThread().name}")
         }
 
         override fun onFinish() {
             super.onFinish()
-            Log.i(TAG, "node3 onFinish")
+            Log.i(TAG, "node3 onFinish ${Thread.currentThread().name}")
         }
     }
 

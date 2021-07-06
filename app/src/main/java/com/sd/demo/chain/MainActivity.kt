@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val _node1 = object : FChain.Node() {
         override fun onRun() {
             Log.i(TAG, "node1 onRun")
-            next()
+            nextNode()
         }
 
         override fun onCancel() {
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     _count++
                     Log.i(TAG, "node2 _count ${_count}")
                 }
-                next()
+                nextNode()
             }
         }
 
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     private val _node3 = object : FChain.Node() {
         override fun onRun() {
             Log.i(TAG, "node3 onRun")
-            next()
+            nextNode()
         }
 
         override fun onCancel() {

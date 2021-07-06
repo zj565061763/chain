@@ -61,7 +61,7 @@ public class FChain {
         return true;
     }
 
-    private synchronized void runNext(@NonNull Node node) {
+    private synchronized void runNextNode(@NonNull Node node) {
         if (mCurrentNode != node) {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
@@ -126,12 +126,12 @@ public class FChain {
         /**
          * 执行下一个节点
          */
-        public final void next() {
+        public final void nextNode() {
             if (_isFinish) {
                 return;
             }
             _isFinish = true;
-            _chain.runNext(this);
+            _chain.runNextNode(this);
         }
 
         protected abstract void onRun();

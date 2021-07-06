@@ -57,7 +57,7 @@ public class FChain {
 
         mCurrentNode = node;
         mCurrentNodeIndex = index;
-        node.notifyRun();
+        runCurrentNode();
         return true;
     }
 
@@ -74,7 +74,13 @@ public class FChain {
         final Node nextNode = mListNode.get(nextIndex);
         mCurrentNode = nextNode;
         mCurrentNodeIndex = nextIndex;
-        nextNode.notifyRun();
+        runCurrentNode();
+    }
+
+    private synchronized void runCurrentNode() {
+        if (mCurrentNode != null) {
+            mCurrentNode.notifyRun();
+        }
     }
 
     /**
@@ -120,7 +126,9 @@ public class FChain {
                 return;
             }
             _isFinish = true;
+
             onCancel();
+            onFinish();
         }
 
         /**
@@ -131,12 +139,17 @@ public class FChain {
                 return;
             }
             _isFinish = true;
+
+            onFinish();
             _chain.runNextNode(this);
         }
 
         protected abstract void onRun();
 
         protected void onCancel() {
+        }
+
+        protected void onFinish() {
         }
     }
 }

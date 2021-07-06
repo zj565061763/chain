@@ -144,11 +144,20 @@ public class FChain {
             _chain.runNextNode(this);
         }
 
+        /**
+         * 节点执行回调，UI线程触发
+         */
         protected abstract void onRun();
 
+        /**
+         * 节点取消回调，{@link FChain#cancel()}所在线程触发
+         */
         protected void onCancel() {
         }
 
+        /**
+         * 节点结束回调，{@link FChain#cancel()}或者{@link #nextNode()}所在线程触发
+         */
         protected void onFinish() {
         }
     }

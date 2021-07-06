@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity() {
             super.onCancel()
             Log.i(TAG, "node1 onCancel")
         }
+
+        override fun onFinish() {
+            super.onFinish()
+            Log.i(TAG, "node1 onFinish")
+        }
     }
 
     private val _node2 = object : FChain.Node() {
@@ -58,6 +63,11 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "node2 onCancel")
             _job?.cancel()
         }
+
+        override fun onFinish() {
+            super.onFinish()
+            Log.i(TAG, "node2 onFinish")
+        }
     }
 
     private val _node3 = object : FChain.Node() {
@@ -69,6 +79,11 @@ class MainActivity : AppCompatActivity() {
         override fun onCancel() {
             super.onCancel()
             Log.i(TAG, "node3 onCancel")
+        }
+
+        override fun onFinish() {
+            super.onFinish()
+            Log.i(TAG, "node3 onFinish")
         }
     }
 

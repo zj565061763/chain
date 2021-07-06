@@ -2,12 +2,12 @@ package com.sd.lib.chain;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FChain {
     /** 节点链 */
-    private final List<Node> mListNode = new CopyOnWriteArrayList<>();
+    private final List<Node> mListNode = new ArrayList<>();
 
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
@@ -15,7 +15,7 @@ public class FChain {
     private int mCurrentNodeIndex = -1;
 
     /** 是否正在分发取消事件 */
-    private volatile boolean mIsDispatchCancel = false;
+    private boolean mIsDispatchCancel = false;
 
     /**
      * 节点数量

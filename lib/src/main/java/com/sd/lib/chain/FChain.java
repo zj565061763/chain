@@ -32,13 +32,7 @@ public class FChain {
             throw new RuntimeException("can not add node when cancelling");
         }
 
-        if (node._chain == null) {
-            node._chain = this;
-        } else {
-            // 同一个node，只允许被添加一次
-            throw new IllegalArgumentException("node has been add to " + node._chain);
-        }
-
+        node.setChain(this);
         mListNode.add(node);
     }
 
@@ -67,7 +61,7 @@ public class FChain {
         return true;
     }
 
-    private synchronized void runNext(Node node) {
+    private synchronized void runNext(@NonNull Node node) {
         if (mCurrentNode != node) {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
@@ -103,8 +97,16 @@ public class FChain {
     }
 
     public static abstract class Node {
-        volatile FChain _chain;
+        private FChain _chain;
         private volatile boolean _isFinish = false;
+
+        private synchronized void setChain(@NonNull FChain chain) {
+            if (_chain == null) {
+                _chain = chain;
+            } else {
+                throw new IllegalArgumentException("node has been add to " + _chain);
+            }
+        }
 
         private void notifyRun() {
             if (_isFinish) {

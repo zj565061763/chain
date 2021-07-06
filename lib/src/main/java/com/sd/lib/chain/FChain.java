@@ -1,5 +1,8 @@
 package com.sd.lib.chain;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -16,6 +19,8 @@ public class FChain {
 
     /** 是否正在分发取消事件 */
     private boolean mIsDispatchCancel = false;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 节点数量
@@ -57,7 +62,7 @@ public class FChain {
 
         mCurrentNode = node;
         mCurrentNodeIndex = index;
-        runCurrentNode();
+        mHandler.post(mNodeRunnable);
         return true;
     }
 
@@ -71,17 +76,21 @@ public class FChain {
             return;
         }
 
-        final Node nextNode = mListNode.get(nextIndex);
-        mCurrentNode = nextNode;
+        mCurrentNode = mListNode.get(nextIndex);
         mCurrentNodeIndex = nextIndex;
-        runCurrentNode();
+        mHandler.post(mNodeRunnable);
     }
 
-    private synchronized void runCurrentNode() {
-        if (mCurrentNode != null) {
-            mCurrentNode.notifyRun();
+    private final Runnable mNodeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            synchronized (FChain.this) {
+                if (mCurrentNode != null) {
+                    mCurrentNode.notifyRun();
+                }
+            }
         }
-    }
+    };
 
     /**
      * 取消，并清空所有节点
@@ -99,6 +108,8 @@ public class FChain {
         mCurrentNode = null;
         mCurrentNodeIndex = -1;
         mListNode.clear();
+        mHandler.removeCallbacks(mNodeRunnable);
+
         mIsDispatchCancel = false;
     }
 

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private val _node1 = object : FChain.Node() {
         override fun onRun() {
-            Log.i(TAG, "node1 onRun ${Thread.currentThread().name}")
+            Log.i(TAG, "node1 onRun -----> ${Thread.currentThread().name}")
             nextNode()
         }
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         private var _job: Job? = null
 
         override fun onRun() {
-            Log.i(TAG, "node2 onRun ${Thread.currentThread().name}")
+            Log.i(TAG, "node2 onRun -----> ${Thread.currentThread().name}")
             _job = GlobalScope.launch {
                 while (_count < 5) {
                     delay(1000)
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     private val _node3 = object : FChain.Node() {
         override fun onRun() {
-            Log.i(TAG, "node3 onRun ${Thread.currentThread().name}")
+            Log.i(TAG, "node3 onRun -----> ${Thread.currentThread().name}")
             nextNode()
         }
 

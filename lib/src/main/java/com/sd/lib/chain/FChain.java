@@ -12,15 +12,15 @@ public class FChain {
     /** 节点链 */
     private final List<Node> mListNode = new ArrayList<>();
 
+    /** 当前执行的节点位置 */
+    private int mCurrentIndex = -1;
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
-    /** 当前执行的节点位置 */
-    private int mCurrentNodeIndex = -1;
 
     /** 是否正在分发取消事件 */
     private boolean mIsDispatchCancel = false;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 节点数量
@@ -57,11 +57,11 @@ public class FChain {
         final int index = 0;
         final Node node = mListNode.get(index);
         if (node._isFinish) {
-            return false;
+            throw new RuntimeException("head node is finish");
         }
 
+        mCurrentIndex = index;
         mCurrentNode = node;
-        mCurrentNodeIndex = index;
 
         notifyCurrentNodeRun();
         return true;
@@ -72,13 +72,13 @@ public class FChain {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
 
-        final int nextIndex = mCurrentNodeIndex + 1;
+        final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
             return;
         }
 
+        mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
-        mCurrentNodeIndex = nextIndex;
 
         notifyCurrentNodeRun();
     }
@@ -112,7 +112,7 @@ public class FChain {
         }
 
         mCurrentNode = null;
-        mCurrentNodeIndex = -1;
+        mCurrentIndex = -1;
         mListNode.clear();
         mHandler.removeCallbacks(mNodeRunnable);
 

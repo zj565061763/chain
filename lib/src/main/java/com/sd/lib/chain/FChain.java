@@ -129,6 +129,13 @@ public class FChain {
         private FChain _chain;
         private volatile NodeState _state = NodeState.None;
 
+        /**
+         * 节点状态
+         */
+        public final NodeState getState() {
+            return _state;
+        }
+
         private synchronized void setChain(@NonNull FChain chain) {
             if (_chain == null) {
                 _chain = chain;
@@ -162,17 +169,10 @@ public class FChain {
             if (_state == NodeState.Finish) {
                 return;
             }
-            setState(NodeState.Finish);
 
+            setState(NodeState.Finish);
             onCancel();
             onFinish();
-        }
-
-        /**
-         * 节点状态
-         */
-        public final NodeState getState() {
-            return _state;
         }
 
         /**
@@ -182,8 +182,8 @@ public class FChain {
             if (_state == NodeState.Finish) {
                 return;
             }
-            setState(NodeState.Finish);
 
+            setState(NodeState.Finish);
             onFinish();
             _chain.runNextNode(this);
         }

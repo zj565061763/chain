@@ -72,6 +72,10 @@ public class FChain {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
 
+        if (node.getState() == NodeState.None) {
+            throw new RuntimeException("nextNode called when node state is none " + node);
+        }
+
         final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
             return;

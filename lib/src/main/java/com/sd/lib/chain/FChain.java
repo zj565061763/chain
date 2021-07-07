@@ -56,7 +56,7 @@ public class FChain {
 
         final int index = 0;
         final Node node = mListNode.get(index);
-        if (node._isFinish) {
+        if (node.getState() == NodeState.Finish) {
             throw new RuntimeException("head node is finish");
         }
 
@@ -119,9 +119,15 @@ public class FChain {
         mIsDispatchCancel = false;
     }
 
+    public enum NodeState {
+        None,
+        Run,
+        Finish,
+    }
+
     public static abstract class Node {
         private FChain _chain;
-        private volatile boolean _isFinish = false;
+        private volatile NodeState _state = NodeState.None;
 
         private synchronized void setChain(@NonNull FChain chain) {
             if (_chain == null) {
@@ -131,31 +137,50 @@ public class FChain {
             }
         }
 
+        private synchronized void setState(NodeState state) {
+            if (_state == state) {
+                return;
+            }
+
+            if (state.ordinal() > _state.ordinal()) {
+                _state = state;
+            } else {
+                throw new RuntimeException("setState " + state + " after " + _state);
+            }
+        }
+
         private void notifyRun() {
-            if (_isFinish) {
+            if (_state == NodeState.Finish) {
                 return;
             }
             onRun();
         }
 
         private void notifyCancel() {
-            if (_isFinish) {
+            if (_state == NodeState.Finish) {
                 return;
             }
-            _isFinish = true;
+            setState(NodeState.Finish);
 
             onCancel();
             onFinish();
         }
 
         /**
+         * 节点状态
+         */
+        public final NodeState getState() {
+            return _state;
+        }
+
+        /**
          * 执行下一个节点
          */
         public final void nextNode() {
-            if (_isFinish) {
+            if (_state == NodeState.Finish) {
                 return;
             }
-            _isFinish = true;
+            setState(NodeState.Finish);
 
             onFinish();
             _chain.runNextNode(this);

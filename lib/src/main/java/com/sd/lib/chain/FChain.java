@@ -153,6 +153,8 @@ public class FChain {
             if (_state == NodeState.Finish) {
                 return;
             }
+
+            setState(NodeState.Run);
             onRun();
         }
 

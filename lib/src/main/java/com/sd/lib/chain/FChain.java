@@ -178,7 +178,7 @@ public class FChain {
         /**
          * 执行下一个节点
          */
-        public final void nextNode() {
+        protected final void nextNode() {
             if (_state == NodeState.Finish) {
                 return;
             }

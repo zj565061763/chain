@@ -21,7 +21,6 @@ public class FChain {
     private boolean mIsDispatchCancel = false;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private final List<Runnable> mListRunnable = new ArrayList<>();
 
     /**
      * 节点数量
@@ -85,22 +84,19 @@ public class FChain {
     }
 
     private void notifyCurrentNodeRun() {
-        final Node currentNode = mCurrentNode;
-        if (currentNode == null) {
-            return;
-        }
-
-        final Runnable notifyRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mListRunnable.remove(this);
-                currentNode.notifyRun();
-            }
-        };
-
-        mListRunnable.add(notifyRunnable);
-        mHandler.post(notifyRunnable);
+        mHandler.post(mNodeRunnable);
     }
+
+    private final Runnable mNodeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            synchronized (FChain.this) {
+                if (mCurrentNode != null) {
+                    mCurrentNode.notifyRun();
+                }
+            }
+        }
+    };
 
     /**
      * 取消，并清空所有节点
@@ -112,18 +108,13 @@ public class FChain {
 
         mIsDispatchCancel = true;
 
-        for (Runnable item : mListRunnable) {
-            mHandler.removeCallbacks(item);
-        }
-        mListRunnable.clear();
-
+        mHandler.removeCallbacks(mNodeRunnable);
         for (Node item : mListNode) {
             item.notifyCancel();
         }
         mListNode.clear();
-
-        mCurrentIndex = -1;
         mCurrentNode = null;
+        mCurrentIndex = -1;
 
         mIsDispatchCancel = false;
     }

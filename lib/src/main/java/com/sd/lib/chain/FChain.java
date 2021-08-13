@@ -102,8 +102,9 @@ public class FChain {
         @Override
         public void run() {
             synchronized (FChain.this) {
-                if (mCurrentNode != null) {
-                    mCurrentNode.notifyRun();
+                final Node currentNode = mCurrentNode;
+                if (currentNode != null) {
+                    currentNode.notifyRun();
                 }
             }
         }

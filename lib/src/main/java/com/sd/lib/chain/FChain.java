@@ -39,10 +39,6 @@ public class FChain {
 
         node.setChain(this);
         synchronized (this) {
-            /**
-             * 这里直接添加节点，不验证是否重复，
-             * 因为{@link Node#setChain(FChain)}方法只允许设置一次。
-             */
             mListNode.add(node);
         }
     }

@@ -94,6 +94,10 @@ public class FChain {
         notifyCurrentNodeRun();
     }
 
+    private synchronized Node getCurrentNode() {
+        return mCurrentNode;
+    }
+
     private void notifyCurrentNodeRun() {
         mHandler.post(mNodeRunnable);
     }
@@ -101,11 +105,9 @@ public class FChain {
     private final Runnable mNodeRunnable = new Runnable() {
         @Override
         public void run() {
-            synchronized (FChain.this) {
-                final Node currentNode = mCurrentNode;
-                if (currentNode != null) {
-                    currentNode.notifyRun();
-                }
+            final Node currentNode = getCurrentNode();
+            if (currentNode != null) {
+                currentNode.notifyRun();
             }
         }
     };

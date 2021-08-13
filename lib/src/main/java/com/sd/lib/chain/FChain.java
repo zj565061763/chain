@@ -167,6 +167,10 @@ public class FChain {
          */
         protected final void nextNode() {
             final FChain chain = _chain;
+            if (chain == null) {
+                throw new RuntimeException("Current node has not been added to the chain.");
+            }
+
             synchronized (chain) {
                 if (_state == NodeState.Finish) {
                     return;

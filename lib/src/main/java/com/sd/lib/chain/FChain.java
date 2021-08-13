@@ -111,14 +111,16 @@ public class FChain {
         mHandler.post(mNodeRunnable);
     }
 
+    private synchronized Node getCurrentNode() {
+        return mCurrentNode;
+    }
+
     private final Runnable mNodeRunnable = new Runnable() {
         @Override
         public void run() {
-            synchronized (FChain.this) {
-                final Node currentNode = mCurrentNode;
-                if (currentNode != null) {
-                    currentNode.notifyRun();
-                }
+            final Node currentNode = getCurrentNode();
+            if (currentNode != null) {
+                currentNode.notifyRun();
             }
         }
     };
@@ -149,8 +151,14 @@ public class FChain {
         }
 
         private void notifyRun() {
-            if (_state == NodeState.None) {
-                _state = NodeState.Run;
+            boolean notifyRun = false;
+            synchronized (Node.this) {
+                if (_state == NodeState.None) {
+                    _state = NodeState.Run;
+                    notifyRun = true;
+                }
+            }
+            if (notifyRun) {
                 onRun();
             }
         }

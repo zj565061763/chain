@@ -169,12 +169,10 @@ public class FChain {
         }
 
         private void notifyRun() {
-            if (_state == NodeState.Finish) {
-                return;
+            if (_state == NodeState.None) {
+                setState(NodeState.Run);
+                onRun();
             }
-
-            setState(NodeState.Run);
-            onRun();
         }
 
         private void notifyCancel() {

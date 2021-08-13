@@ -75,6 +75,27 @@ public class FChain {
         return true;
     }
 
+    /**
+     * 取消，并清空所有节点
+     */
+    public synchronized void cancel() {
+        if (mIsDispatchCancel) {
+            return;
+        }
+
+        mIsDispatchCancel = true;
+
+        mHandler.removeCallbacks(mNodeRunnable);
+        for (Node item : mListNode) {
+            item.notifyCancel();
+        }
+        mListNode.clear();
+        mCurrentNode = null;
+        mCurrentIndex = -1;
+
+        mIsDispatchCancel = false;
+    }
+
     private synchronized void runNextNode(@NonNull Node node) {
         if (mCurrentNode != node) {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
@@ -110,27 +131,6 @@ public class FChain {
             }
         }
     };
-
-    /**
-     * 取消，并清空所有节点
-     */
-    public synchronized void cancel() {
-        if (mIsDispatchCancel) {
-            return;
-        }
-
-        mIsDispatchCancel = true;
-
-        mHandler.removeCallbacks(mNodeRunnable);
-        for (Node item : mListNode) {
-            item.notifyCancel();
-        }
-        mListNode.clear();
-        mCurrentNode = null;
-        mCurrentIndex = -1;
-
-        mIsDispatchCancel = false;
-    }
 
     public enum NodeState {
         None,

@@ -151,21 +151,29 @@ public class FChain {
         }
 
         private void notifyRun() {
-            boolean notifyRun = false;
+            boolean notify = false;
             synchronized (Node.this) {
                 if (_state == NodeState.None) {
                     _state = NodeState.Run;
-                    notifyRun = true;
+                    notify = true;
                 }
             }
-            if (notifyRun) {
+
+            if (notify) {
                 onRun();
             }
         }
 
         private void notifyCancel() {
-            if (_state != NodeState.Finish) {
-                _state = NodeState.Finish;
+            boolean notify = false;
+            synchronized (Node.this) {
+                if (_state != NodeState.Finish) {
+                    _state = NodeState.Finish;
+                    notify = true;
+                }
+            }
+
+            if (notify) {
                 onCancel();
                 onFinish();
             }

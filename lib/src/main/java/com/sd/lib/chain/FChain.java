@@ -85,12 +85,13 @@ public class FChain {
         mIsDispatchCancel = true;
 
         mHandler.removeCallbacks(mNodeRunnable);
+        mCurrentNode = null;
+        mCurrentIndex = -1;
+
         for (Node item : mListNode) {
             item.notifyCancel();
         }
         mListNode.clear();
-        mCurrentNode = null;
-        mCurrentIndex = -1;
 
         mIsDispatchCancel = false;
     }

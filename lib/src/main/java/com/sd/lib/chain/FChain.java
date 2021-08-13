@@ -93,13 +93,14 @@ public class FChain {
     }
 
     @Nullable
-    private synchronized Runnable nextNodeRunnable(@NonNull Node node) {
-        if (mCurrentNode != node) {
-            throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
+    private synchronized Runnable nextNodeRunnable() {
+        final Node currentNode = mCurrentNode;
+        if (currentNode == null) {
+            return null;
         }
 
-        if (node.getState() != NodeState.Finish) {
-            throw new RuntimeException("Illegal node state " + node.getState());
+        if (currentNode.getState() != NodeState.Finish) {
+            throw new RuntimeException("Current node has not finished " + currentNode.getState());
         }
 
         final int nextIndex = mCurrentIndex + 1;
@@ -187,7 +188,7 @@ public class FChain {
                 if (_state == NodeState.Run) {
                     _state = NodeState.Finish;
 
-                    final Runnable nextRunnable = chain.nextNodeRunnable(this);
+                    final Runnable nextRunnable = chain.nextNodeRunnable();
                     onFinish();
 
                     if (nextRunnable != null) {

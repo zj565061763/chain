@@ -176,22 +176,24 @@ public class FChain {
          * 执行下一个节点
          */
         protected final void nextNode() {
-            if (_state == NodeState.Finish) {
-                return;
+            final FChain chain = _chain;
+            synchronized (chain) {
+                if (_state == NodeState.Finish) {
+                    return;
+                }
+                if (_state != NodeState.Run) {
+                    throw new RuntimeException("nextNode() should be called when state Run " + this);
+                }
+
+                _state = NodeState.Finish;
+
+                /**
+                 * 由于{@link FChain#runNextNode(Node)}里面是通过{@link Handler}通知下一个节点，
+                 * 所以这里在{@link #onFinish()}之前触发
+                 */
+                chain.runNextNode(this);
+                onFinish();
             }
-
-            if (_state == NodeState.None) {
-                throw new RuntimeException("nextNode called when node state is none " + this);
-            }
-
-            _state = NodeState.Finish;
-
-            /**
-             * 由于{@link FChain#runNextNode(Node)}里面是通过{@link Handler}通知下一个节点，
-             * 所以这里在{@link #onFinish()}之前触发
-             */
-            _chain.runNextNode(this);
-            onFinish();
         }
 
         /**

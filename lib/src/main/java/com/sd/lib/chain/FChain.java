@@ -55,7 +55,9 @@ public class FChain {
         if (mListNode.isEmpty()) {
             return false;
         }
+
         if (mCurrentNode != null) {
+            // 已经开始了，不处理
             return false;
         }
 

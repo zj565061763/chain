@@ -63,8 +63,8 @@ public class FChain {
 
         final int index = 0;
         final Node node = mListNode.get(index);
-        if (node.getState() == NodeState.Finish) {
-            throw new RuntimeException("head node is finish");
+        if (node.getState() != NodeState.None) {
+            throw new RuntimeException("Illegal node state " + node.getState());
         }
 
         mCurrentIndex = index;

@@ -157,33 +157,19 @@ public class FChain {
             }
         }
 
-        private synchronized void setState(NodeState state) {
-            if (_state == state) {
-                return;
-            }
-
-            if (state.ordinal() > _state.ordinal()) {
-                _state = state;
-            } else {
-                throw new RuntimeException("setState " + state + " after " + _state);
-            }
-        }
-
         private void notifyRun() {
             if (_state == NodeState.None) {
-                setState(NodeState.Run);
+                _state = NodeState.Run;
                 onRun();
             }
         }
 
         private void notifyCancel() {
-            if (_state == NodeState.Finish) {
-                return;
+            if (_state != NodeState.Finish) {
+                _state = NodeState.Finish;
+                onCancel();
+                onFinish();
             }
-
-            setState(NodeState.Finish);
-            onCancel();
-            onFinish();
         }
 
         /**
@@ -198,7 +184,8 @@ public class FChain {
                 throw new RuntimeException("nextNode called when node state is none " + this);
             }
 
-            setState(NodeState.Finish);
+            _state = NodeState.Finish;
+
             /**
              * 由于{@link FChain#runNextNode(Node)}里面是通过{@link Handler}通知下一个节点，
              * 所以这里在{@link #onFinish()}之前触发

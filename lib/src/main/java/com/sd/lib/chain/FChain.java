@@ -130,7 +130,7 @@ public class FChain {
     }
 
     public static abstract class Node {
-        private FChain _chain;
+        private volatile FChain _chain;
         private volatile NodeState _state = NodeState.None;
 
         /**

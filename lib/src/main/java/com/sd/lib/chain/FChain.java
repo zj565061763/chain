@@ -79,6 +79,10 @@ public class FChain {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
 
+        if (node.getState() != NodeState.Finish) {
+            throw new RuntimeException("Illegal node state " + node.getState());
+        }
+
         final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
             return;

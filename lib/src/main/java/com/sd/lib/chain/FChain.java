@@ -175,14 +175,15 @@ public class FChain {
                 if (_state == NodeState.Finish) {
                     return;
                 }
-                if (_state != NodeState.Run) {
+
+                if (_state == NodeState.Run) {
+                    _state = NodeState.Finish;
+
+                    chain.runNextNode(this);
+                    onFinish();
+                } else {
                     throw new RuntimeException("nextNode() should be called when state Run " + this);
                 }
-
-                _state = NodeState.Finish;
-
-                chain.runNextNode(this);
-                onFinish();
             }
         }
 

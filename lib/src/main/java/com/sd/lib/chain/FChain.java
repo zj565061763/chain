@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +92,8 @@ public class FChain {
         mIsDispatchCancel = false;
     }
 
-    private synchronized void runNextNode(@NonNull Node node) {
+    @Nullable
+    private synchronized Runnable nextNodeRunnable(@NonNull Node node) {
         if (mCurrentNode != node) {
             throw new RuntimeException("current node:" + mCurrentNode + " call node:" + node);
         }
@@ -102,12 +104,18 @@ public class FChain {
 
         final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
-            return;
+            return null;
         }
 
         mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
-        mHandler.post(mNodeRunnable);
+
+        return new Runnable() {
+            @Override
+            public void run() {
+                mHandler.post(mNodeRunnable);
+            }
+        };
     }
 
     private final Runnable mNodeRunnable = new Runnable() {
@@ -179,8 +187,12 @@ public class FChain {
                 if (_state == NodeState.Run) {
                     _state = NodeState.Finish;
 
-                    chain.runNextNode(this);
+                    final Runnable nextRunnable = chain.nextNodeRunnable(this);
                     onFinish();
+
+                    if (nextRunnable != null) {
+                        nextRunnable.run();
+                    }
                 } else {
                     throw new RuntimeException("nextNode() should be called when state Run " + this);
                 }

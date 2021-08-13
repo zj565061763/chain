@@ -188,18 +188,17 @@ public class FChain {
                 throw new RuntimeException("Current node has not been added to the chain.");
             }
 
-            synchronized (chain) {
-                if (_state == NodeState.Finish) {
-                    return;
-                }
-
+            boolean notify = false;
+            synchronized (Node.this) {
                 if (_state == NodeState.Run) {
                     _state = NodeState.Finish;
-                    onFinish();
-                    chain.runNextNode();
-                } else {
-                    throw new RuntimeException("nextNode() should be called when state Run " + this);
+                    notify = true;
                 }
+            }
+
+            if (notify) {
+                onFinish();
+                chain.runNextNode();
             }
         }
 

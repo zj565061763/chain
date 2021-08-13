@@ -30,7 +30,7 @@ public class FChain {
     }
 
     /**
-     * 添加节点
+     * 添加节点，一个节点对象只能添加到一个链上
      */
     public synchronized void add(@NonNull Node node) {
         if (mIsDispatchCancel) {
@@ -38,6 +38,11 @@ public class FChain {
         }
 
         node.setChain(this);
+
+        /**
+         * 这里直接添加节点，不验证是否重复，
+         * 因为{@link Node#setChain(FChain)}方法只允许设置一次。
+         */
         mListNode.add(node);
     }
 

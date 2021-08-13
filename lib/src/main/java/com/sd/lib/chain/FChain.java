@@ -181,10 +181,6 @@ public class FChain {
 
                 _state = NodeState.Finish;
 
-                /**
-                 * 由于{@link FChain#runNextNode(Node)}里面是通过{@link Handler}通知下一个节点，
-                 * 所以这里在{@link #onFinish()}之前触发
-                 */
                 chain.runNextNode(this);
                 onFinish();
             }

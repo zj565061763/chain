@@ -70,8 +70,7 @@ public class FChain {
 
         mCurrentIndex = index;
         mCurrentNode = node;
-
-        notifyCurrentNodeRun();
+        mHandler.post(mNodeRunnable);
         return true;
     }
 
@@ -112,11 +111,6 @@ public class FChain {
 
         mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
-
-        notifyCurrentNodeRun();
-    }
-
-    private void notifyCurrentNodeRun() {
         mHandler.post(mNodeRunnable);
     }
 

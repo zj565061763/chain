@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 while (_count < 5) {
                     delay(1000)
                     _count++
-                    Log.i(TAG, "node2 _count ${_count}")
+                    Log.i(TAG, "node2 _count ${_count} ${Thread.currentThread().name}")
                 }
                 nextNode()
             }

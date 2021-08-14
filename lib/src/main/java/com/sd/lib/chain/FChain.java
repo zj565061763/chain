@@ -34,7 +34,7 @@ public class FChain {
      */
     public void add(@NonNull Node node) {
         if (mIsDispatchCancel) {
-            throw new RuntimeException("can not add node when cancelling");
+            throw new RuntimeException("Cannot add node when canceling.");
         }
 
         node.setChain(this);

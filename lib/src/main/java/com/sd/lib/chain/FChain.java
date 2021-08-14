@@ -37,7 +37,7 @@ public class FChain {
             throw new RuntimeException("Cannot add node when canceling.");
         }
 
-        node.setChain(this);
+        node.init(this, mHandler);
         synchronized (this) {
             mListNode.add(node);
         }
@@ -66,7 +66,7 @@ public class FChain {
 
         mCurrentIndex = index;
         mCurrentNode = node;
-        mCurrentNode.notifyRun(mHandler);
+        mCurrentNode.notifyRun();
         return true;
     }
 
@@ -80,7 +80,6 @@ public class FChain {
 
         mIsDispatchCancel = true;
 
-        mHandler.removeCallbacksAndMessages(null);
         for (Node item : mListNode) {
             item.notifyCancel();
         }
@@ -108,7 +107,7 @@ public class FChain {
 
         mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
-        mCurrentNode.notifyRun(mHandler);
+        mCurrentNode.notifyRun();
     }
 
     public enum NodeState {
@@ -118,7 +117,8 @@ public class FChain {
     }
 
     public static abstract class Node {
-        private volatile FChain _chain;
+        private FChain _chain;
+        private Handler _handler;
         private volatile NodeState _state = NodeState.None;
 
         /**
@@ -128,15 +128,27 @@ public class FChain {
             return _state;
         }
 
-        private synchronized void setChain(@NonNull FChain chain) {
+        private synchronized void init(@NonNull FChain chain, @NonNull Handler handler) {
             if (_chain == null) {
                 _chain = chain;
+                _handler = handler;
             } else {
-                throw new IllegalArgumentException("node has been add to " + _chain);
+                throw new IllegalArgumentException("Node has been added to " + _chain);
             }
         }
 
-        private void notifyRun(@NonNull Handler handler) {
+        private synchronized void checkInit() {
+            if (_chain == null) {
+                throw new RuntimeException("Node has not been added to any chain.");
+            }
+            if (_handler == null) {
+                throw new RuntimeException("Node's handler is null.");
+            }
+        }
+
+        private void notifyRun() {
+            checkInit();
+
             boolean notify = false;
             synchronized (Node.this) {
                 if (_state == NodeState.None) {
@@ -145,17 +157,23 @@ public class FChain {
                 }
             }
 
-            if (notify) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
+            if (!notify) {
+                return;
+            }
+
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (_state == NodeState.Run) {
                         onRun();
                     }
-                });
-            }
+                }
+            });
         }
 
         private void notifyCancel() {
+            checkInit();
+
             boolean notify = false;
             synchronized (Node.this) {
                 if (_state != NodeState.Finish) {
@@ -164,20 +182,24 @@ public class FChain {
                 }
             }
 
-            if (notify) {
-                onCancel();
-                onFinish();
+            if (!notify) {
+                return;
             }
+
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    onCancel();
+                    onFinish();
+                }
+            });
         }
 
         /**
          * 执行下一个节点
          */
         protected final void nextNode() {
-            final FChain chain = _chain;
-            if (chain == null) {
-                throw new RuntimeException("Current node has not been added to the chain.");
-            }
+            checkInit();
 
             boolean notify = false;
             synchronized (Node.this) {
@@ -187,25 +209,32 @@ public class FChain {
                 }
             }
 
-            if (notify) {
-                onFinish();
-                chain.runNextNode();
+            if (!notify) {
+                return;
             }
+
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    onFinish();
+                }
+            });
+            _chain.runNextNode();
         }
 
         /**
-         * 节点执行回调，UI线程触发
+         * 节点执行回调，主线程触发
          */
         protected abstract void onRun();
 
         /**
-         * 节点取消回调，{@link FChain#cancel()}所在线程触发
+         * 节点取消回调，主线程触发
          */
         protected void onCancel() {
         }
 
         /**
-         * 节点结束回调，{@link FChain#cancel()}或者{@link #nextNode()}所在线程触发
+         * 节点结束回调，主线程触发
          */
         protected void onFinish() {
         }

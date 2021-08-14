@@ -66,7 +66,7 @@ public class FChain {
 
         mCurrentIndex = index;
         mCurrentNode = node;
-        mHandler.post(mNodeRunnable);
+        mCurrentNode.notifyRun(mHandler);
         return true;
     }
 
@@ -80,7 +80,7 @@ public class FChain {
 
         mIsDispatchCancel = true;
 
-        mHandler.removeCallbacks(mNodeRunnable);
+        mHandler.removeCallbacksAndMessages(null);
         for (Node item : mListNode) {
             item.notifyCancel();
         }
@@ -108,22 +108,8 @@ public class FChain {
 
         mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
-        mHandler.post(mNodeRunnable);
+        mCurrentNode.notifyRun(mHandler);
     }
-
-    private synchronized Node getCurrentNode() {
-        return mCurrentNode;
-    }
-
-    private final Runnable mNodeRunnable = new Runnable() {
-        @Override
-        public void run() {
-            final Node currentNode = getCurrentNode();
-            if (currentNode != null) {
-                currentNode.notifyRun();
-            }
-        }
-    };
 
     public enum NodeState {
         None,
@@ -150,7 +136,7 @@ public class FChain {
             }
         }
 
-        private void notifyRun() {
+        private void notifyRun(@NonNull Handler handler) {
             boolean notify = false;
             synchronized (Node.this) {
                 if (_state == NodeState.None) {
@@ -160,7 +146,12 @@ public class FChain {
             }
 
             if (notify) {
-                onRun();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onRun();
+                    }
+                });
             }
         }
 

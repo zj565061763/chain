@@ -5,13 +5,16 @@ plugins {
 
 def libGroupId = "com.sd.lib.android"
 def libArtifactId = "chain"
-def libVersion = "1.0.0-beta01"
+def libVersionCode = 20210707
+def libVersionName = "1.0.0-beta01"
 
 android {
-    compileSdk 30
+    compileSdkVersion 30
     defaultConfig {
-        minSdk 16
-        targetSdk 30
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode libVersionCode
+        versionName libVersionName
     }
 
     buildTypes {
@@ -27,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
 }
 
 task generateSourcesJar(type: Jar) {
@@ -43,7 +46,7 @@ afterEvaluate {
 
                 groupId = libGroupId
                 artifactId = libArtifactId
-                version = libVersion
+                version = libVersionName
 
                 // 上传源码
                 artifact generateSourcesJar

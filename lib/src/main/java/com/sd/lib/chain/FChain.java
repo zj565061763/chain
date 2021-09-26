@@ -18,7 +18,7 @@ public class FChain {
     private Node mCurrentNode = null;
 
     /** 是否正在分发取消事件 */
-    private volatile boolean mIsDispatchCancel = false;
+    private boolean mIsDispatchCancel = false;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -32,15 +32,12 @@ public class FChain {
     /**
      * 添加节点，一个节点对象只能添加到一个链上
      */
-    public void add(@NonNull Node node) {
+    public synchronized void add(@NonNull Node node) {
         if (mIsDispatchCancel) {
             throw new RuntimeException("Cannot add node when canceling.");
         }
-
         node.init(this, mHandler);
-        synchronized (this) {
-            mListNode.add(node);
-        }
+        mListNode.add(node);
     }
 
     /**

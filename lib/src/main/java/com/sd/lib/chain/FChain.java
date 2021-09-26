@@ -158,18 +158,16 @@ public class FChain {
                 }
             }
 
-            if (!notify) {
-                return;
-            }
-
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (_state == NodeState.Run) {
-                        onRun();
+            if (notify) {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (_state == NodeState.Run) {
+                            onRun();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         private void notifyCancel() {
@@ -183,17 +181,15 @@ public class FChain {
                 }
             }
 
-            if (!notify) {
-                return;
+            if (notify) {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onCancel();
+                        onFinish();
+                    }
+                });
             }
-
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onCancel();
-                    onFinish();
-                }
-            });
         }
 
         /**
@@ -210,17 +206,15 @@ public class FChain {
                 }
             }
 
-            if (!notify) {
-                return;
+            if (notify) {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onFinish();
+                    }
+                });
+                _chain.runNextNode();
             }
-
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onFinish();
-                }
-            });
-            _chain.runNextNode();
         }
 
         /**

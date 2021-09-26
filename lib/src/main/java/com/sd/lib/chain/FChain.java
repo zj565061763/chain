@@ -121,6 +121,7 @@ public class FChain {
         private FChain _chain;
         private Handler _handler;
         private volatile NodeState _state = NodeState.None;
+        private volatile boolean _hasRun;
 
         /**
          * 节点状态
@@ -163,6 +164,7 @@ public class FChain {
                     @Override
                     public void run() {
                         if (_state == NodeState.Run) {
+                            _hasRun = true;
                             onRun();
                         }
                     }
@@ -177,7 +179,7 @@ public class FChain {
             synchronized (Node.this) {
                 if (_state != NodeState.Finish) {
                     _state = NodeState.Finish;
-                    notify = true;
+                    notify = _hasRun;
                 }
             }
 

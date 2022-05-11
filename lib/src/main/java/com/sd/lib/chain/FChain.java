@@ -187,8 +187,11 @@ public class FChain {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onCancel();
-                        onFinish();
+                        try {
+                            onCancel();
+                        } finally {
+                            onFinish();
+                        }
                     }
                 });
             }

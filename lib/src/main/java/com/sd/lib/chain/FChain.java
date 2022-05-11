@@ -18,7 +18,7 @@ public class FChain {
     private Node mCurrentNode = null;
 
     /** 是否正在分发取消事件 */
-    private volatile boolean mIsDispatchCancel = false;
+    private boolean mIsDispatchCancel = false;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 

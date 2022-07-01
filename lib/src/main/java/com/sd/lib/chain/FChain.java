@@ -126,7 +126,7 @@ public class FChain {
 
     /**
      * 结束回调，在主线程触发。
-     * 此方法在节点的{@link Node#onFinish()}之后触发，
+     * 此方法在{@link Node#onFinish()}之后触发，
      * 所以此方法和{@link #onStart()}不一定成对触发，因为节点可能还未开始就被取消了，例如在{@link #onStart()}中调用了{@link #cancel()}。
      */
     protected void onFinish() {

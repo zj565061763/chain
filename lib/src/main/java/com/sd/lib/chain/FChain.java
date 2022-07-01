@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class FChain {
     /**
      * 返回当前节点
      */
+    @Nullable
     public Node getCurrentNode() {
         return mCurrentNode;
     }

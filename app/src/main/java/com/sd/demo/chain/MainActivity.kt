@@ -44,16 +44,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val _node2 = object : FChain.Node() {
-        private var _count = 0
         private var _job: Job? = null
 
         override fun onRun() {
             Log.i(TAG, "node2 onRun -----> ${Thread.currentThread().name}")
             _job = GlobalScope.launch {
-                while (_count < 5) {
+                repeat(5) {
                     delay(1000)
-                    _count++
-                    Log.i(TAG, "node2 _count ${_count} ${Thread.currentThread().name}")
+                    Log.i(TAG, "node2 _count ${it + 1} ${Thread.currentThread().name}")
                 }
                 nextNode()
             }

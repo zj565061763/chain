@@ -90,7 +90,7 @@ public class FChain {
     }
 
     /**
-     * 取消，并清空所有节点
+     * 取消当前节点，并清空所有节点
      */
     public void cancel() {
         synchronized (this) {
@@ -100,12 +100,12 @@ public class FChain {
 
             mIsDispatchCancel = true;
 
-            for (Node item : mListNode) {
-                item.notifyCancel();
+            if (mCurrentNode != null) {
+                mCurrentNode.notifyCancel();
+                mCurrentNode = null;
             }
-            mListNode.clear();
-            mCurrentNode = null;
             mCurrentIndex = -1;
+            mListNode.clear();
 
             mIsDispatchCancel = false;
         }

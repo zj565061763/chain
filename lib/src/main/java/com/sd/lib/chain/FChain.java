@@ -84,21 +84,23 @@ public class FChain {
     /**
      * 取消，并清空所有节点
      */
-    public synchronized void cancel() {
-        if (mIsDispatchCancel) {
-            return;
+    public void cancel() {
+        synchronized (this) {
+            if (mIsDispatchCancel) {
+                return;
+            }
+
+            mIsDispatchCancel = true;
+
+            for (Node item : mListNode) {
+                item.notifyCancel();
+            }
+            mListNode.clear();
+            mCurrentNode = null;
+            mCurrentIndex = -1;
+
+            mIsDispatchCancel = false;
         }
-
-        mIsDispatchCancel = true;
-
-        for (Node item : mListNode) {
-            item.notifyCancel();
-        }
-        mListNode.clear();
-        mCurrentNode = null;
-        mCurrentIndex = -1;
-
-        mIsDispatchCancel = false;
     }
 
     private synchronized void runNextNode() {

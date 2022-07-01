@@ -133,6 +133,7 @@ public class FChain {
         /**
          * 节点状态
          */
+        @NonNull
         public final NodeState getState() {
             return _state;
         }

@@ -118,6 +118,9 @@ public class FChain {
         mCurrentNode.notifyRun();
     }
 
+    /**
+     * 开始回调，在{@link #start()}调用线程触发
+     */
     protected void onStart() {
     }
 

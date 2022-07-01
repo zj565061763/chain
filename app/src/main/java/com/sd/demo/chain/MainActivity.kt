@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onFinish() {
             super.onFinish()
-            Log.i(TAG, "chain onStart")
+            Log.i(TAG, "chain onFinish")
         }
     }
 

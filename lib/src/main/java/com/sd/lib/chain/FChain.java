@@ -246,6 +246,10 @@ public class FChain {
 
         private void notifyFinish() {
             onFinish();
+            if (_chain.mCurrentNode == null) {
+                // chain被取消了
+                _chain.onFinish();
+            }
         }
 
         /**

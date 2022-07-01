@@ -41,12 +41,14 @@ public class FChain {
     /**
      * 添加节点，一个节点对象只能添加到一个链上
      */
-    public synchronized void add(@NonNull Node node) {
-        if (mIsDispatchCancel) {
-            throw new RuntimeException("Cannot add node when canceling.");
+    public void add(@NonNull Node node) {
+        synchronized (this) {
+            if (mIsDispatchCancel) {
+                throw new RuntimeException("Cannot add node when canceling.");
+            }
+            node.init(this, mHandler);
+            mListNode.add(node);
         }
-        node.init(this, mHandler);
-        mListNode.add(node);
     }
 
     /**

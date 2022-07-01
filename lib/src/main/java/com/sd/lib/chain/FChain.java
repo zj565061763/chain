@@ -78,7 +78,16 @@ public class FChain {
         }
 
         onStart();
-        return true;
+
+        /**
+         * 由于{@link #onStart()}里面可能调用了{@link #cancel()}，所以要再判断一下
+         */
+        synchronized (this) {
+            if (mCurrentNode != null) {
+                mCurrentNode.notifyRun();
+            }
+            return mCurrentNode != null;
+        }
     }
 
     /**

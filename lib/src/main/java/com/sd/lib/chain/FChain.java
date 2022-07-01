@@ -99,6 +99,7 @@ public class FChain {
 
         final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
+            notifyOnFinish();
             return;
         }
 

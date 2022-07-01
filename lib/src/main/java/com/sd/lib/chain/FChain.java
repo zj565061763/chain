@@ -26,7 +26,7 @@ public class FChain {
     /**
      * 节点数量
      */
-    public int size() {
+    public synchronized int size() {
         return mListNode.size();
     }
 
@@ -34,7 +34,7 @@ public class FChain {
      * 返回当前节点
      */
     @Nullable
-    public Node getCurrentNode() {
+    public synchronized Node getCurrentNode() {
         return mCurrentNode;
     }
 

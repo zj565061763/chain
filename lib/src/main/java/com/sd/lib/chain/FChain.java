@@ -39,8 +39,8 @@ public class FChain {
      * 添加节点，一个节点对象只能添加到一个链上。
      */
     public void add(@NonNull Node node) {
-        synchronized (this) {
-            node.init(this, mHandler);
+        synchronized (FChain.this) {
+            node.init(FChain.this, mHandler);
             mListNode.add(node);
         }
     }
@@ -51,14 +51,9 @@ public class FChain {
      * @return true-本次调用触发了开始
      */
     public boolean start() {
-        synchronized (this) {
-            if (mListNode.isEmpty()) {
-                return false;
-            }
-            if (mCurrentNode != null) {
-                // 已经开始了，不处理
-                return false;
-            }
+        synchronized (FChain.this) {
+            if (mListNode.isEmpty()) return false;
+            if (mCurrentNode != null) return false;
 
             final int index = 0;
             final Node node = mListNode.get(index);
@@ -68,18 +63,10 @@ public class FChain {
 
             mCurrentIndex = index;
             mCurrentNode = node;
-        }
 
-        onStart();
-
-        /**
-         * 由于{@link #onStart()}里面可能调用了{@link #cancel()}，所以要再判断一下。
-         */
-        synchronized (this) {
-            if (mCurrentNode != null) {
-                mCurrentNode.notifyRun();
-            }
-            return mCurrentNode != null;
+            notifyOnStart();
+            mCurrentNode.notifyRun();
+            return true;
         }
     }
 
@@ -87,7 +74,7 @@ public class FChain {
      * 取消当前节点，并清空所有节点。
      */
     public void cancel() {
-        synchronized (this) {
+        synchronized (FChain.this) {
             if (mCurrentNode != null) {
                 mCurrentNode.notifyCancel();
                 mCurrentNode = null;
@@ -118,8 +105,17 @@ public class FChain {
         mCurrentNode.notifyRun();
     }
 
+    private void notifyOnStart() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                onStart();
+            }
+        });
+    }
+
     /**
-     * 开始回调，在{@link #start()}调用线程触发。
+     * 开始回调，在主线程触发。
      */
     protected void onStart() {
     }

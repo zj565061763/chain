@@ -17,6 +17,11 @@ class MainActivity : AppCompatActivity() {
             super.onStart()
             Log.i(TAG, "chain onStart")
         }
+
+        override fun onFinish() {
+            super.onFinish()
+            Log.i(TAG, "chain onStart")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

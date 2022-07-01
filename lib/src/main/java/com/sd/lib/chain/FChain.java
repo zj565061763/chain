@@ -36,7 +36,7 @@ public class FChain {
     }
 
     /**
-     * 添加节点，一个节点对象只能添加到一个链上
+     * 添加节点，一个节点对象只能添加到一个链上。
      */
     public void add(@NonNull Node node) {
         synchronized (this) {
@@ -73,7 +73,7 @@ public class FChain {
         onStart();
 
         /**
-         * 由于{@link #onStart()}里面可能调用了{@link #cancel()}，所以要再判断一下
+         * 由于{@link #onStart()}里面可能调用了{@link #cancel()}，所以要再判断一下。
          */
         synchronized (this) {
             if (mCurrentNode != null) {
@@ -84,7 +84,7 @@ public class FChain {
     }
 
     /**
-     * 取消当前节点，并清空所有节点
+     * 取消当前节点，并清空所有节点。
      */
     public void cancel() {
         synchronized (this) {
@@ -119,9 +119,17 @@ public class FChain {
     }
 
     /**
-     * 开始回调，在{@link #start()}调用线程触发
+     * 开始回调，在{@link #start()}调用线程触发。
      */
     protected void onStart() {
+    }
+
+    /**
+     * 结束回调，在主线程触发。
+     * 此方法在节点的{@link Node#onFinish()}之后触发，
+     * 所以此方法和{@link #onStart()}不一定成对触发，因为节点可能还未开始就被取消了，例如在{@link #onStart()}中调用了{@link #cancel()}。
+     */
+    protected void onFinish() {
     }
 
     public enum NodeState {

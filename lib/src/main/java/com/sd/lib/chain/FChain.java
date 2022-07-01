@@ -68,8 +68,9 @@ public class FChain {
 
             mCurrentIndex = index;
             mCurrentNode = node;
-            mCurrentNode.notifyRun();
         }
+
+        mCurrentNode.notifyRun();
         onStart();
         return true;
     }

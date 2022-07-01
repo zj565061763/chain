@@ -12,7 +12,12 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
 
-    private val _chain = FChain()
+    private val _chain = object : FChain() {
+        override fun onStart() {
+            super.onStart()
+            Log.i(TAG, "chain onStart")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

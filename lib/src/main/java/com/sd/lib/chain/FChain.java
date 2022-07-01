@@ -50,24 +50,27 @@ public class FChain {
      *
      * @return true-本次调用触发了开始
      */
-    public synchronized boolean start() {
-        if (mListNode.isEmpty()) {
-            return false;
-        }
-        if (mCurrentNode != null) {
-            // 已经开始了，不处理
-            return false;
-        }
+    public boolean start() {
+        synchronized (this) {
+            if (mListNode.isEmpty()) {
+                return false;
+            }
+            if (mCurrentNode != null) {
+                // 已经开始了，不处理
+                return false;
+            }
 
-        final int index = 0;
-        final Node node = mListNode.get(index);
-        if (node.getState() != NodeState.None) {
-            throw new RuntimeException("Illegal node state " + node.getState());
-        }
+            final int index = 0;
+            final Node node = mListNode.get(index);
+            if (node.getState() != NodeState.None) {
+                throw new RuntimeException("Illegal node state " + node.getState());
+            }
 
-        mCurrentIndex = index;
-        mCurrentNode = node;
-        mCurrentNode.notifyRun();
+            mCurrentIndex = index;
+            mCurrentNode = node;
+            mCurrentNode.notifyRun();
+        }
+        onStart();
         return true;
     }
 
@@ -110,6 +113,9 @@ public class FChain {
         mCurrentIndex = nextIndex;
         mCurrentNode = mListNode.get(nextIndex);
         mCurrentNode.notifyRun();
+    }
+
+    protected void onStart() {
     }
 
     public enum NodeState {

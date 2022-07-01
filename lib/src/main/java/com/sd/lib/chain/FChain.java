@@ -75,12 +75,14 @@ public class FChain {
      */
     public void cancel() {
         synchronized (FChain.this) {
-            if (mCurrentNode != null) {
-                mCurrentNode.notifyCancel();
-                mCurrentNode = null;
-            }
+            if (mCurrentNode == null) return;
+
+            mCurrentNode.notifyCancel();
+            mCurrentNode = null;
             mCurrentIndex = -1;
             mListNode.clear();
+
+            notifyOnFinish();
         }
     }
 
@@ -125,6 +127,8 @@ public class FChain {
 
     /**
      * 开始回调，在主线程触发。
+     * 此方法触发表示{@link #start()}被触发过，不代表此刻处于开始状态，
+     * 因为外部有可能在{@link #start()}之后立即触发了{@link #cancel()}。
      */
     protected void onStart() {
     }

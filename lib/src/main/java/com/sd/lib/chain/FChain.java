@@ -203,7 +203,7 @@ public class FChain {
                         try {
                             onCancel();
                         } finally {
-                            onFinish();
+                            notifyFinish();
                         }
                     }
                 });
@@ -228,11 +228,15 @@ public class FChain {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onFinish();
+                        notifyFinish();
                     }
                 });
                 _chain.runNextNode();
             }
+        }
+
+        private void notifyFinish() {
+            onFinish();
         }
 
         /**

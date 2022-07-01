@@ -114,6 +114,15 @@ public class FChain {
         });
     }
 
+    private void notifyOnFinish() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                onFinish();
+            }
+        });
+    }
+
     /**
      * 开始回调，在主线程触发。
      */
@@ -122,8 +131,6 @@ public class FChain {
 
     /**
      * 结束回调，在主线程触发。
-     * 此方法在{@link Node#onFinish()}之后触发，
-     * 所以此方法和{@link #onStart()}不一定成对触发，因为节点可能还未开始就被取消了，例如在{@link #onStart()}中调用了{@link #cancel()}。
      */
     protected void onFinish() {
     }
@@ -208,7 +215,7 @@ public class FChain {
                         try {
                             onCancel();
                         } finally {
-                            notifyFinish();
+                            onFinish();
                         }
                     }
                 });
@@ -233,18 +240,10 @@ public class FChain {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        notifyFinish();
+                        onFinish();
                     }
                 });
                 _chain.runNextNode();
-            }
-        }
-
-        private void notifyFinish() {
-            onFinish();
-            if (_chain.mCurrentNode == null) {
-                // chain被取消了
-                _chain.onFinish();
             }
         }
 

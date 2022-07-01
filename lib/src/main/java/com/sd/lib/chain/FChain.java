@@ -18,9 +18,6 @@ public class FChain {
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
 
-    /** 是否正在分发取消事件 */
-    private boolean mIsDispatchCancel = false;
-
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
@@ -43,9 +40,6 @@ public class FChain {
      */
     public void add(@NonNull Node node) {
         synchronized (this) {
-            if (mIsDispatchCancel) {
-                throw new RuntimeException("Cannot add node when canceling.");
-            }
             node.init(this, mHandler);
             mListNode.add(node);
         }
@@ -94,20 +88,12 @@ public class FChain {
      */
     public void cancel() {
         synchronized (this) {
-            if (mIsDispatchCancel) {
-                return;
-            }
-
-            mIsDispatchCancel = true;
-
             if (mCurrentNode != null) {
                 mCurrentNode.notifyCancel();
                 mCurrentNode = null;
             }
             mCurrentIndex = -1;
             mListNode.clear();
-
-            mIsDispatchCancel = false;
         }
     }
 

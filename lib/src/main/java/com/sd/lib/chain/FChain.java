@@ -30,6 +30,13 @@ public class FChain {
     }
 
     /**
+     * 返回当前节点
+     */
+    public Node getCurrentNode() {
+        return mCurrentNode;
+    }
+
+    /**
      * 添加节点，一个节点对象只能添加到一个链上
      */
     public synchronized void add(@NonNull Node node) {

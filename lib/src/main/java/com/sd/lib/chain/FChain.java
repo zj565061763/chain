@@ -63,9 +63,9 @@ public class FChain {
 
             mCurrentIndex = index;
             mCurrentNode = node;
+            mCurrentNode.notifyRun();
         }
 
-        mCurrentNode.notifyRun();
         onStart();
         return true;
     }
@@ -90,26 +90,24 @@ public class FChain {
         mIsDispatchCancel = false;
     }
 
-    private void runNextNode() {
-        synchronized (this) {
-            final Node currentNode = mCurrentNode;
-            if (currentNode == null) {
-                // 还未开始，不允许调用此方法
-                return;
-            }
-
-            if (currentNode.getState() != NodeState.Finish) {
-                throw new RuntimeException("Current node has not finished " + currentNode.getState());
-            }
-
-            final int nextIndex = mCurrentIndex + 1;
-            if (nextIndex >= mListNode.size()) {
-                return;
-            }
-
-            mCurrentIndex = nextIndex;
-            mCurrentNode = mListNode.get(nextIndex);
+    private synchronized void runNextNode() {
+        final Node currentNode = mCurrentNode;
+        if (currentNode == null) {
+            // 还未开始，不允许调用此方法
+            return;
         }
+
+        if (currentNode.getState() != NodeState.Finish) {
+            throw new RuntimeException("Current node has not finished " + currentNode.getState());
+        }
+
+        final int nextIndex = mCurrentIndex + 1;
+        if (nextIndex >= mListNode.size()) {
+            return;
+        }
+
+        mCurrentIndex = nextIndex;
+        mCurrentNode = mListNode.get(nextIndex);
         mCurrentNode.notifyRun();
     }
 

@@ -94,6 +94,7 @@ public class FChain {
     private synchronized void runNextNode() {
         final Node currentNode = mCurrentNode;
         if (currentNode == null) {
+            // 还未开始，不允许调用此方法
             return;
         }
 

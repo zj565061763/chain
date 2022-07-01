@@ -77,12 +77,14 @@ public class FChain {
         synchronized (FChain.this) {
             if (mCurrentNode == null) return;
 
-            mCurrentNode.notifyCancel();
+            final boolean stateChanged = mCurrentNode.notifyCancel();
             mCurrentNode = null;
             mCurrentIndex = -1;
             mListNode.clear();
 
-            notifyOnFinish();
+            if (stateChanged) {
+                notifyOnFinish();
+            }
         }
     }
 
@@ -202,13 +204,15 @@ public class FChain {
             }
         }
 
-        private void notifyCancel() {
+        private boolean notifyCancel() {
             checkInit();
 
+            boolean result = false;
             boolean notify = false;
             synchronized (Node.this) {
                 if (_state != NodeState.Finish) {
                     _state = NodeState.Finish;
+                    result = true;
                     notify = _hasRun;
                 }
             }
@@ -225,6 +229,8 @@ public class FChain {
                     }
                 });
             }
+
+            return result;
         }
 
         /**
@@ -258,13 +264,15 @@ public class FChain {
         protected abstract void onRun();
 
         /**
-         * 节点取消回调，主线程触发
+         * 节点取消回调，主线程触发。
+         * 如果{@link #onRun()}未触发过，则此方法不会被触发。
          */
         protected void onCancel() {
         }
 
         /**
-         * 节点结束回调，主线程触发
+         * 节点结束回调，主线程触发。
+         * 如果{@link #onRun()}未触发过，则此方法不会被触发。
          */
         protected void onFinish() {
         }

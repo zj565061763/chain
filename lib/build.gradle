@@ -5,16 +5,13 @@ plugins {
 
 def libGroupId = "com.sd.lib.android"
 def libArtifactId = "chain"
-def libVersionCode = 20220512
 def libVersionName = "1.0.0-beta02"
 
 android {
-    compileSdkVersion 30
+    compileSdk 32
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 30
-        versionCode libVersionCode
-        versionName libVersionName
+        minSdk 19
+        targetSdk 32
     }
 
     buildTypes {

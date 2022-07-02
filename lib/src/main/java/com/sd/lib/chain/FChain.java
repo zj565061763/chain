@@ -219,21 +219,25 @@ public class FChain {
         protected final void nextNode() {
             checkInit();
 
-            boolean notify = false;
+            boolean stateChanged = false;
             synchronized (Node.this) {
                 if (_state == NodeState.Run) {
                     _state = NodeState.Finish;
-                    notify = true;
+                    stateChanged = true;
                 }
             }
 
-            if (notify) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onFinish();
-                    }
-                });
+            if (stateChanged) {
+                if (_hasRun) {
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onFinish();
+                        }
+                    });
+                }
+
+                // 通知下一个节点
                 _chain.runNextNode();
             }
         }

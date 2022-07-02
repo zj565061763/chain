@@ -12,14 +12,14 @@ import java.util.List;
 public class FChain {
     /** 节点链 */
     private final List<Node> mListNode = new ArrayList<>();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /** 当前执行的节点位置 */
     private int mCurrentIndex = -1;
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
-
+    /** 是否已经通知了{@link #onFinish()} */
     private boolean mHasNotifyFinish = false;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 节点数量
@@ -62,6 +62,9 @@ public class FChain {
                 throw new RuntimeException("Illegal node state " + node.getState());
             }
 
+            // 重置为false
+            mHasNotifyFinish = false;
+
             mCurrentIndex = index;
             mCurrentNode = node;
             mCurrentNode.notifyRun();
@@ -81,7 +84,7 @@ public class FChain {
             mCurrentIndex = -1;
             mListNode.clear();
 
-            notifyOnFinish();
+            notifyOnFinishLocked();
         }
     }
 
@@ -98,7 +101,7 @@ public class FChain {
 
         final int nextIndex = mCurrentIndex + 1;
         if (nextIndex >= mListNode.size()) {
-            notifyOnFinish();
+            notifyOnFinishLocked();
             return;
         }
 
@@ -107,7 +110,7 @@ public class FChain {
         mCurrentNode.notifyRun();
     }
 
-    private void notifyOnFinish() {
+    private void notifyOnFinishLocked() {
         if (mHasNotifyFinish) return;
         mHasNotifyFinish = true;
 

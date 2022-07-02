@@ -200,19 +200,22 @@ public class FChain {
                 }
             }
 
-            if (stateChanged) {
-                if (_hasRun) {
-                    _handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                onCancel();
-                            } finally {
-                                onFinish();
-                            }
+            if (!stateChanged) {
+                // 状态未改变，不处理
+                return;
+            }
+
+            if (_hasRun) {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            onCancel();
+                        } finally {
+                            onFinish();
                         }
-                    });
-                }
+                    }
+                });
             }
         }
 

@@ -191,25 +191,27 @@ public class FChain {
         private void notifyCancel() {
             checkInit();
 
-            boolean notify = false;
+            boolean stateChanged = false;
             synchronized (Node.this) {
                 if (_state != NodeState.Finish) {
                     _state = NodeState.Finish;
-                    notify = _hasRun;
+                    stateChanged = true;
                 }
             }
 
-            if (notify) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            onCancel();
-                        } finally {
-                            onFinish();
+            if (stateChanged) {
+                if (_hasRun) {
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                onCancel();
+                            } finally {
+                                onFinish();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
 

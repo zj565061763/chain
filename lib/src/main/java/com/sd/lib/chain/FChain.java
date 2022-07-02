@@ -169,25 +169,23 @@ public class FChain {
         private void notifyRun() {
             checkInit();
 
-            boolean notify = false;
             synchronized (Node.this) {
                 if (_state == NodeState.None) {
                     _state = NodeState.Run;
-                    notify = true;
+                } else {
+                    throw new RuntimeException("Illegal node state " + _state);
                 }
             }
 
-            if (notify) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (_state == NodeState.Run) {
-                            _hasRun = true;
-                            onRun();
-                        }
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (_state == NodeState.Run) {
+                        _hasRun = true;
+                        onRun();
                     }
-                });
-            }
+                }
+            });
         }
 
         private void notifyCancel() {

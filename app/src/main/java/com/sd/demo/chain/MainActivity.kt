@@ -13,11 +13,6 @@ class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
 
     private val _chain = object : FChain() {
-        override fun onStart() {
-            super.onStart()
-            Log.i(TAG, "chain onStart ${Thread.currentThread().name}")
-        }
-
         override fun onFinish() {
             super.onFinish()
             Log.i(TAG, "chain onFinish ${Thread.currentThread().name}")

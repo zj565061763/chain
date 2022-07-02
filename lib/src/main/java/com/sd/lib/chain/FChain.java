@@ -18,6 +18,7 @@ public class FChain {
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
 
+    private boolean mHasNotifyFinish = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
@@ -63,8 +64,6 @@ public class FChain {
 
             mCurrentIndex = index;
             mCurrentNode = node;
-
-            notifyOnStart();
             mCurrentNode.notifyRun();
             return true;
         }
@@ -77,14 +76,12 @@ public class FChain {
         synchronized (FChain.this) {
             if (mCurrentNode == null) return;
 
-            final boolean stateChanged = mCurrentNode.notifyCancel();
+            mCurrentNode.notifyCancel();
             mCurrentNode = null;
             mCurrentIndex = -1;
             mListNode.clear();
 
-            if (stateChanged) {
-                notifyOnFinish();
-            }
+            notifyOnFinish();
         }
     }
 
@@ -110,30 +107,16 @@ public class FChain {
         mCurrentNode.notifyRun();
     }
 
-    private void notifyOnStart() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                onStart();
-            }
-        });
-    }
-
     private void notifyOnFinish() {
+        if (mHasNotifyFinish) return;
+        mHasNotifyFinish = true;
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 onFinish();
             }
         });
-    }
-
-    /**
-     * 开始回调，在主线程触发。
-     * 此方法触发表示{@link #start()}被触发过，不代表此刻处于开始状态，
-     * 因为外部有可能在{@link #start()}之后立即触发了{@link #cancel()}。
-     */
-    protected void onStart() {
     }
 
     /**
@@ -204,15 +187,13 @@ public class FChain {
             }
         }
 
-        private boolean notifyCancel() {
+        private void notifyCancel() {
             checkInit();
 
-            boolean result = false;
             boolean notify = false;
             synchronized (Node.this) {
                 if (_state != NodeState.Finish) {
                     _state = NodeState.Finish;
-                    result = true;
                     notify = _hasRun;
                 }
             }
@@ -229,8 +210,6 @@ public class FChain {
                     }
                 });
             }
-
-            return result;
         }
 
         /**

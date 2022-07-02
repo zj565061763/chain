@@ -180,6 +180,7 @@ public class FChain {
             _handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    // 检查状态，如果未被取消，则通知回调
                     if (_state == NodeState.Run) {
                         _hasRun = true;
                         onRun();

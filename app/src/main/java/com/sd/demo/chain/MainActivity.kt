@@ -28,11 +28,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startChain() {
-        cancelChain()
+        if (_chain != null) return
         object : FChain() {
             override fun onFinish() {
                 super.onFinish()
                 logMsg { "chain onFinish" }
+                _chain = null
             }
         }.apply {
             // node 1
@@ -111,6 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun cancelChain() {
         _chain?.cancel()
+        _chain = null
     }
 
     override fun onDestroy() {

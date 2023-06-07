@@ -16,8 +16,10 @@ public class FChain {
 
     /** 当前执行的节点位置 */
     private int mCurrentIndex = -1;
+
     /** 当前执行的节点 */
     private Node mCurrentNode = null;
+
     /** 是否已经通知了{@link #onFinish()} */
     private boolean mHasNotifyFinish = false;
 

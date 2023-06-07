@@ -5,15 +5,13 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.sd.demo.chain.databinding.ActivityMainBinding
 import com.sd.lib.chain.FChain
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val _binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val _scope = MainScope()
-
     private var _chain: FChain? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,77 +34,40 @@ class MainActivity : AppCompatActivity() {
                 _chain = null
             }
         }.apply {
-            // node 1
-            this.add(
-                object : FChain.Node() {
-                    override fun onRun() {
-                        logMsg { "node1 onRun ----->" }
-                        nextNode()
-                    }
-
-                    override fun onCancel() {
-                        super.onCancel()
-                        logMsg { "node1 onCancel" }
-                    }
-
-                    override fun onFinish() {
-                        super.onFinish()
-                        logMsg { "node1 onFinish" }
-                    }
-                }
-            )
-
-            // node 2
-            this.add(
-                object : FChain.Node() {
-                    private var _job: Job? = null
-
-                    override fun onRun() {
-                        logMsg { "node2 onRun ----->" }
-                        _job = _scope.launch {
-                            repeat(5) {
-                                delay(1000)
-                                logMsg { "node2 count ${it + 1}" }
-                            }
-                            nextNode()
-                        }
-                    }
-
-                    override fun onCancel() {
-                        super.onCancel()
-                        logMsg { "node2 onCancel" }
-                        _job?.cancel()
-                    }
-
-                    override fun onFinish() {
-                        super.onFinish()
-                        logMsg { "node2 onFinish" }
-                    }
-                }
-            )
-
-            // node 3
-            this.add(
-                object : FChain.Node() {
-                    override fun onRun() {
-                        logMsg { "node3 onRun ----->" }
-                        nextNode()
-                    }
-
-                    override fun onCancel() {
-                        super.onCancel()
-                        logMsg { "node3 onCancel" }
-                    }
-
-                    override fun onFinish() {
-                        super.onFinish()
-                        logMsg { "node3 onFinish" }
-                    }
-                }
-            )
+            this.add(newNode("node1"))
+            this.add(newNode("node2"))
+            this.add(newNode("node3"))
         }.also { chain ->
             _chain = chain
             chain.start()
+        }
+    }
+
+    private fun newNode(tag: String): FChain.Node {
+        return object : FChain.Node() {
+            private val _scope = MainScope()
+
+            override fun onRun() {
+                logMsg { "$tag onRun ----->" }
+                _scope.launch {
+                    repeat(5) {
+                        delay(1000)
+                        logMsg { "$tag count ${it + 1}" }
+                    }
+                    nextNode()
+                }
+            }
+
+            override fun onCancel() {
+                super.onCancel()
+                logMsg { "$tag onCancel" }
+                _scope.cancel()
+            }
+
+            override fun onFinish() {
+                super.onFinish()
+                logMsg { "$tag onFinish" }
+            }
         }
     }
 

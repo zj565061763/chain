@@ -135,9 +135,14 @@ open class FChain {
             }
 
             _handler.post {
-                if (state == NodeState.Run) {
-                    _hasRun = true
-                    onRun()
+                synchronized(this@Node) {
+                    (state == NodeState.Run).also {
+                        if (it) _hasRun = true
+                    }
+                }.let {
+                    if (it) {
+                        onRun()
+                    }
                 }
             }
         }

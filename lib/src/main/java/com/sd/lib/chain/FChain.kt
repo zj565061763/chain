@@ -148,18 +148,18 @@ open class FChain {
         }
 
         internal fun notifyCancel() {
-            val stateChanged = synchronized(this@Node) {
+            synchronized(this@Node) {
                 if (state != NodeState.Finish) {
                     state = NodeState.Finish
-                    true
+                    _hasRun
                 } else {
                     false
                 }
-            }
-
-            if (stateChanged && _hasRun) {
-                _handler.post { onCancel() }
-                _handler.post { onFinish() }
+            }.let {
+                if (it) {
+                    _handler.post { onCancel() }
+                    _handler.post { onFinish() }
+                }
             }
         }
 

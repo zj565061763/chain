@@ -110,7 +110,6 @@ open class FChain {
         var state = NodeState.None
             private set
 
-        @Volatile
         private var _hasRun = false
             set(value) {
                 require(value) { "Require true value." }
@@ -164,18 +163,17 @@ open class FChain {
          * 执行下一个节点
          */
         protected fun nextNode() {
-            val stateChanged = synchronized(this@Node) {
-                if (state == NodeState.None) error("Can not call nextNode() before onRun() invoked.")
-                if (state == NodeState.Run) {
-                    state = NodeState.Finish
-                    true
-                } else {
-                    false
+            synchronized(this@Node) {
+                when (state) {
+                    NodeState.None -> error("Can not call nextNode() before onRun() invoked.")
+                    NodeState.Finish -> return
+                    NodeState.Run -> {
+                        state = NodeState.Finish
+                        _hasRun
+                    }
                 }
-            }
-
-            if (stateChanged) {
-                if (_hasRun) {
+            }.let { notify ->
+                if (notify) {
                     _handler.post { onFinish() }
                 }
                 _chain.runNextNode()

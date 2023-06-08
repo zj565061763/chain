@@ -155,8 +155,8 @@ open class FChain {
                 } else {
                     false
                 }
-            }.let {
-                if (it) {
+            }.let { notify ->
+                if (notify) {
                     _handler.post { onCancel() }
                     _handler.post { onFinish() }
                 }

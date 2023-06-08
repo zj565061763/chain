@@ -127,11 +127,8 @@ open class FChain {
 
         internal fun notifyRun() {
             synchronized(this@Node) {
-                if (state == NodeState.None) {
-                    state = NodeState.Run
-                } else {
-                    error("Illegal node state $state")
-                }
+                check(state == NodeState.None) { "Illegal node state $state" }
+                state = NodeState.Run
             }
 
             _handler.post {

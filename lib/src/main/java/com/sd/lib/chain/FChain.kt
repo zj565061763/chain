@@ -139,8 +139,8 @@ open class FChain {
                     (state == NodeState.Run).also {
                         if (it) _hasRun = true
                     }
-                }.let {
-                    if (it) {
+                }.let { notify ->
+                    if (notify) {
                         onRun()
                     }
                 }

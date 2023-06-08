@@ -106,15 +106,16 @@ open class FChain {
         private lateinit var _chain: FChain
         private lateinit var _handler: Handler
 
-        @Volatile
-        var state = NodeState.None
-            private set
+        private var _state = NodeState.None
 
         private var _hasRun = false
             set(value) {
                 require(value) { "Require true value." }
                 field = value
             }
+
+        val state: NodeState
+            get() = synchronized(this@Node) { _state }
 
         internal fun init(chain: FChain, handler: Handler) {
             synchronized(this@Node) {
@@ -126,13 +127,13 @@ open class FChain {
 
         internal fun notifyRun() {
             synchronized(this@Node) {
-                check(state == NodeState.None) { "Illegal node state $state" }
-                state = NodeState.Run
+                check(_state == NodeState.None) { "Illegal node state $_state" }
+                _state = NodeState.Run
             }
 
             _handler.post {
                 synchronized(this@Node) {
-                    (state == NodeState.Run).also {
+                    (_state == NodeState.Run).also {
                         if (it) _hasRun = true
                     }
                 }.let { notify ->
@@ -145,8 +146,8 @@ open class FChain {
 
         internal fun notifyCancel() {
             synchronized(this@Node) {
-                if (state != NodeState.Finish) {
-                    state = NodeState.Finish
+                if (_state != NodeState.Finish) {
+                    _state = NodeState.Finish
                     _hasRun
                 } else {
                     false
@@ -164,11 +165,11 @@ open class FChain {
          */
         protected fun nextNode() {
             synchronized(this@Node) {
-                when (state) {
+                when (_state) {
                     NodeState.None -> error("Can not call nextNode() before onRun() invoked.")
                     NodeState.Finish -> return
                     NodeState.Run -> {
-                        state = NodeState.Finish
+                        _state = NodeState.Finish
                         _hasRun
                     }
                 }

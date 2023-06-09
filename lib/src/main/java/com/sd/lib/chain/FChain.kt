@@ -14,6 +14,14 @@ open class FChain {
     private var _currentNode: Node? = null
 
     /**
+     * 是否正在执行中
+     */
+    @Synchronized
+    fun isRunning(): Boolean {
+        return _currentNode != null
+    }
+
+    /**
      * 节点数量
      */
     @Synchronized
@@ -36,8 +44,8 @@ open class FChain {
      */
     @Synchronized
     fun start(): Boolean {
+        if (isRunning()) return false
         if (_nodeHolder.isEmpty()) return false
-        if (_currentNode != null) return false
 
         _nodeHolder[0].also {
             _currentIndex = 0

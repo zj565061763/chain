@@ -59,10 +59,7 @@ open class FChain {
     fun cancel() {
         val node = _currentNode ?: return
         node.notifyCancel()
-        _currentNode = null
-        _currentIndex = -1
-        _nodeHolder.clear()
-        notifyOnFinishLocked()
+        finish()
     }
 
     @Synchronized
@@ -74,7 +71,7 @@ open class FChain {
 
         val nextIndex = _currentIndex + 1
         if (nextIndex >= _nodeHolder.size) {
-            notifyOnFinishLocked()
+            finish()
             return
         }
 
@@ -84,7 +81,11 @@ open class FChain {
         }.notifyRun()
     }
 
-    private fun notifyOnFinishLocked() {
+    private fun finish() {
+        _currentNode = null
+        _currentIndex = -1
+        _nodeHolder.clear()
+
         if (!_hasNotifyFinish) {
             _hasNotifyFinish = true
             _handler.post { onFinish() }

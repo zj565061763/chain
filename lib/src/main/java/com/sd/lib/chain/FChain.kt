@@ -82,8 +82,8 @@ open class FChain {
     }
 
     private fun finish() {
-        _currentNode = null
         _currentIndex = -1
+        _currentNode = null
         _nodeHolder.clear()
 
         if (!_hasNotifyFinish) {

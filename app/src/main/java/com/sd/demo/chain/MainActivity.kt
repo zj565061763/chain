@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         }.apply {
             this.add(newNode("node1"))
             this.add(newNode("node2"))
-            this.add(newNode("node3"))
         }.also { chain ->
             _chain = chain
             chain.start()
@@ -73,7 +72,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun cancelChain() {
         _chain?.cancel()
-        _chain = null
     }
 
     override fun onDestroy() {

@@ -59,9 +59,7 @@ open class FChain {
     @Synchronized
     private fun runNextNode() {
         val node = _currentNode ?: return
-        if (node.state != NodeState.Finish) {
-            error("Current node has not finished " + node.state)
-        }
+        node.checkFinish()
 
         val nextIndex = _currentIndex + 1
         if (nextIndex >= _nodeHolder.size) {
@@ -87,7 +85,7 @@ open class FChain {
      */
     protected open fun onFinish() {}
 
-    enum class NodeState {
+    private enum class NodeState {
         None,
         Run,
         Finish
@@ -105,14 +103,17 @@ open class FChain {
                 field = value
             }
 
-        val state: NodeState
-            get() = synchronized(this@Node) { _state }
-
         internal fun init(chain: FChain, handler: Handler) {
             synchronized(this@Node) {
                 if (this::_chain.isInitialized) error("Node has been added to $_chain")
                 _chain = chain
                 _handler = handler
+            }
+        }
+
+        internal fun checkFinish() {
+            synchronized(this@Node) {
+                check(_state == NodeState.Finish) { "Node has not finished with state:${_state}" }
             }
         }
 

@@ -13,9 +13,6 @@ open class FChain {
     /** 当前执行的节点  */
     private var _currentNode: Node? = null
 
-    /** 是否已经通知了[onFinish]  */
-    private var _hasNotifyFinish = false
-
     /**
      * 节点数量
      */
@@ -41,9 +38,6 @@ open class FChain {
     fun start(): Boolean {
         if (_nodeHolder.isEmpty()) return false
         if (_currentNode != null) return false
-
-        // 重置为false
-        _hasNotifyFinish = false
 
         _nodeHolder[0].also {
             _currentIndex = 0
@@ -85,11 +79,7 @@ open class FChain {
         _currentIndex = -1
         _currentNode = null
         _nodeHolder.clear()
-
-        if (!_hasNotifyFinish) {
-            _hasNotifyFinish = true
-            _handler.post { onFinish() }
-        }
+        _handler.post { onFinish() }
     }
 
     /**

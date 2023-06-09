@@ -25,7 +25,7 @@ open class FChain {
     }
 
     /**
-     * 添加节点，一个节点对象只能添加到一个链上。
+     * 添加节点，一个节点对象只能被添加一次
      */
     @Synchronized
     fun add(node: Node) {

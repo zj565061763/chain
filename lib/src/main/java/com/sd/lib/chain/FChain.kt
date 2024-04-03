@@ -88,7 +88,7 @@ open class FChain {
     /**
      * 结束回调，在主线程触发。
      */
-    protected open fun onFinish() {}
+    protected open fun onFinish() = Unit
 
     private enum class NodeState {
         None,
@@ -101,12 +101,7 @@ open class FChain {
         private lateinit var _handler: Handler
 
         private var _state = NodeState.None
-
         private var _hasRun = false
-            set(value) {
-                require(value) { "Require true value." }
-                field = value
-            }
 
         internal fun init(chain: FChain, handler: Handler) {
             synchronized(this@Node) {
@@ -187,12 +182,12 @@ open class FChain {
          * 节点取消回调，主线程触发。
          * 如果[onRun]未触发过，则此方法不会被触发。
          */
-        protected open fun onCancel() {}
+        protected open fun onCancel() = Unit
 
         /**
          * 节点结束回调，主线程触发。
          * 如果[onRun]未触发过，则此方法不会被触发。
          */
-        protected open fun onFinish() {}
+        protected open fun onFinish() = Unit
     }
 }

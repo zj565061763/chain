@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         object : FChain() {
             override fun onFinish() {
                 super.onFinish()
-                logMsg { "chain onFinish" }
+                logMsg { "chain onFinish ${Thread.currentThread().name}" }
             }
         }.let { chain ->
             _chain = chain

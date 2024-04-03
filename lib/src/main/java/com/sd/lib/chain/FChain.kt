@@ -87,7 +87,7 @@ open class FChain {
     }
 
     /**
-     * 结束回调，在主线程触发
+     * 结束回调，主线程触发
      */
     protected open fun onFinish() = Unit
 

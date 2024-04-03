@@ -41,14 +41,13 @@ open class FChain {
      */
     @Synchronized
     fun start(): Boolean {
-        if (isRunning()) return false
+        if (_currentNode != null) return false
         if (_nodes.isEmpty()) return false
 
         _nodes.first().also {
             _currentIndex = 0
             _currentNode = it
         }.notifyRun()
-
         return true
     }
 

@@ -5,7 +5,7 @@ import android.os.Looper
 
 open class FChain {
     /** 节点链  */
-    private val _nodeHolder: MutableList<Node> = mutableListOf()
+    private val _nodes: MutableList<Node> = mutableListOf()
     private val _handler = Handler(Looper.getMainLooper())
 
     /** 当前执行的节点位置  */
@@ -17,17 +17,13 @@ open class FChain {
      * 是否正在执行中
      */
     @Synchronized
-    fun isRunning(): Boolean {
-        return _currentNode != null
-    }
+    fun isRunning(): Boolean = _currentNode != null
 
     /**
      * 节点数量
      */
     @Synchronized
-    fun size(): Int {
-        return _nodeHolder.size
-    }
+    fun size(): Int = _nodes.size
 
     /**
      * 添加节点，一个节点对象只能被添加一次
@@ -35,7 +31,7 @@ open class FChain {
     @Synchronized
     fun add(node: Node) {
         node.init(this@FChain, _handler)
-        _nodeHolder.add(node)
+        _nodes.add(node)
     }
 
     /**
@@ -45,12 +41,13 @@ open class FChain {
     @Synchronized
     fun start(): Boolean {
         if (_currentNode != null) return false
-        if (_nodeHolder.isEmpty()) return false
+        if (_nodes.isEmpty()) return false
 
-        _nodeHolder[0].also {
+        _nodes.first().also {
             _currentIndex = 0
             _currentNode = it
         }.notifyRun()
+
         return true
     }
 
@@ -70,12 +67,12 @@ open class FChain {
         node.checkFinish()
 
         val nextIndex = _currentIndex + 1
-        if (nextIndex >= _nodeHolder.size) {
+        if (nextIndex >= _nodes.size) {
             finish()
             return
         }
 
-        _nodeHolder[nextIndex].also {
+        _nodes[nextIndex].also {
             _currentIndex = nextIndex
             _currentNode = it
         }.notifyRun()
@@ -84,7 +81,7 @@ open class FChain {
     private fun finish() {
         _currentIndex = -1
         _currentNode = null
-        _nodeHolder.clear()
+        _nodes.clear()
         _handler.post { onFinish() }
     }
 

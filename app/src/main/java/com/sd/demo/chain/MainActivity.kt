@@ -31,13 +31,11 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() {
                 super.onFinish()
                 logMsg { "chain onFinish" }
-                _chain = null
             }
-        }.apply {
-            this.add(newNode("node1"))
-            this.add(newNode("node2"))
-        }.also { chain ->
+        }.let { chain ->
             _chain = chain
+            chain.add(newNode("node1"))
+            chain.add(newNode("node2"))
             chain.start()
         }
     }
@@ -72,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun cancelChain() {
         _chain?.cancel()
+        _chain = null
     }
 
     override fun onDestroy() {

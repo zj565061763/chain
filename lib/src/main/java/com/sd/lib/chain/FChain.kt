@@ -45,7 +45,7 @@ open class FChain {
         if (_currentNode != null) return false
         if (_nodes.isEmpty()) return false
 
-        _nodes.first().also {
+        _nodes[0].also {
             _currentIndex = 0
             _currentNode = it
         }.notifyRun()

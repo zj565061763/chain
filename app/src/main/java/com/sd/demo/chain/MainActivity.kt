@@ -56,13 +56,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCancel() {
-                super.onCancel()
                 logMsg { "$tag onCancel" }
                 _scope.cancel()
             }
 
             override fun onFinish() {
-                super.onFinish()
                 logMsg { "$tag onFinish" }
             }
         }

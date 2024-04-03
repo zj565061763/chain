@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             private val _scope = MainScope()
 
             override fun onRun() {
-                logMsg { "$tag onRun ----->" }
+                logMsg { "$tag onRun -----> ${Thread.currentThread().name}" }
                 _scope.launch {
                     repeat(5) {
                         delay(1000)
@@ -56,12 +56,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCancel() {
-                logMsg { "$tag onCancel" }
+                logMsg { "$tag onCancel ${Thread.currentThread().name}" }
                 _scope.cancel()
             }
 
             override fun onFinish() {
-                logMsg { "$tag onFinish" }
+                logMsg { "$tag onFinish ${Thread.currentThread().name}" }
             }
         }
     }

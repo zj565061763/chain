@@ -2,6 +2,7 @@ package com.sd.lib.chain
 
 import android.os.Handler
 import android.os.Looper
+import java.util.concurrent.atomic.AtomicBoolean
 
 open class FChain {
     /** 所有节点  */
@@ -97,6 +98,8 @@ open class FChain {
     }
 
     abstract class Node {
+        private val _init = AtomicBoolean(false)
+
         private lateinit var _chain: FChain
         private lateinit var _handler: Handler
 
@@ -104,9 +107,12 @@ open class FChain {
         private var _hasRun = false
 
         internal fun init(chain: FChain, handler: Handler) {
-            if (this::_chain.isInitialized) error("Node has been added to $_chain")
-            _chain = chain
-            _handler = handler
+            if (_init.compareAndSet(false, true)) {
+                _chain = chain
+                _handler = handler
+            } else {
+                error("Node has been initialized.")
+            }
         }
 
         internal fun checkFinish() {
@@ -143,7 +149,7 @@ open class FChain {
          * 执行下一个节点
          */
         protected fun nextNode() {
-            check(this::_chain.isInitialized) { "Node has not been initialized." }
+            check(_init.get()) { "Node has not been initialized." }
             synchronized(_chain) {
                 when (_state) {
                     NodeState.None -> error("Can not call nextNode() before onRun().")

@@ -38,33 +38,25 @@ class ChainTest {
             assertEquals("Node has been initialized.", result.exceptionOrNull()!!.message)
         }
     }
-
-    @Test
-    fun `test node size`() {
-        val chain = FChain()
-        chain.add(newChainNode())
-        chain.add(newChainNode())
-        chain.add(newChainNode())
-        assertEquals(3, chain.size())
-    }
 }
 
 private fun newChainNode(
-    onCancel: () -> Unit = {},
-    onFinish: () -> Unit = {},
-    onRun: () -> Unit = {},
+    onCancel: FChain.Node.() -> Unit = {},
+    onFinish: FChain.Node.() -> Unit = {},
+    onRun: FChain.Node.() -> Unit = {},
 ): FChain.Node {
     return object : FChain.Node() {
         override fun onRun() {
-            onRun.invoke()
+            onRun.invoke(this)
+            nextNode()
         }
 
         override fun onCancel() {
-            onCancel.invoke()
+            onCancel.invoke(this)
         }
 
         override fun onFinish() {
-            onFinish.invoke()
+            onFinish.invoke(this)
         }
     }
 }

@@ -16,18 +16,6 @@ open class FChain {
     private val _handler = Handler(Looper.getMainLooper())
 
     /**
-     * 是否正在执行中
-     */
-    @Synchronized
-    fun isRunning(): Boolean = _currentNode != null
-
-    /**
-     * 节点数量
-     */
-    @Synchronized
-    fun size(): Int = _nodes.size
-
-    /**
      * 添加节点，一个节点对象只能被添加一次
      */
     @Synchronized

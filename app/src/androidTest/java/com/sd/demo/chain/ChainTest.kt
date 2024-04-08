@@ -1,10 +1,12 @@
 package com.sd.demo.chain
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.sd.lib.chain.FChain
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.atomic.AtomicInteger
 
 @RunWith(AndroidJUnit4::class)
 class ChainTest {
@@ -32,6 +34,23 @@ class ChainTest {
 
         assertEquals(true, chain.start())
         assertEquals(false, chain.start())
+    }
+
+    @Test
+    fun testOnFinish() {
+        val count = AtomicInteger()
+        val chain = object : FChain() {
+            override fun onFinish() {
+                count.incrementAndGet()
+            }
+        }
+
+        val node = newChainNode()
+        chain.add(node)
+        chain.start()
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        assertEquals(1, count.get())
     }
 }
 

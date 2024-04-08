@@ -1,32 +1,16 @@
 package com.sd.demo.chain
 
-import android.os.Looper
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sd.lib.chain.FChain
-import io.mockk.every
-import io.mockk.mockkClass
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class ChainTest {
 
-    @Before
-    fun setUp() {
-        val looper = mockkClass(Looper::class)
-        mockkStatic(Looper::class)
-        every { Looper.getMainLooper() } returns looper
-    }
-
-    @After
-    fun tearDown() {
-        unmockkAll()
-    }
-
     @Test
-    fun `test add node`() {
+    fun testAddNode() {
         val chain = FChain()
 
         val node = newChainNode()
@@ -37,6 +21,17 @@ class ChainTest {
         }.let { result ->
             assertEquals("Node has been initialized.", result.exceptionOrNull()!!.message)
         }
+    }
+
+    @Test
+    fun testStart() {
+        val chain = FChain()
+
+        val node = newChainNode()
+        chain.add(node)
+
+        assertEquals(true, chain.start())
+        assertEquals(false, chain.start())
     }
 }
 

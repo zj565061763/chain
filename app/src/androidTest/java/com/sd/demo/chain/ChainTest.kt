@@ -14,7 +14,7 @@ class ChainTest {
     fun testAddNode() {
         val chain = FChain()
 
-        val node = newRunnableNode()
+        val node = newTestNode()
         chain.add(node)
 
         runCatching {
@@ -29,7 +29,7 @@ class ChainTest {
         val chain = FChain()
         assertEquals(false, chain.isStarted())
 
-        val node = newRunnableNode()
+        val node = newTestNode()
         chain.add(node)
 
         assertEquals(true, chain.start())
@@ -50,31 +50,57 @@ class ChainTest {
             }
         }
 
-        val node = newRunnableNode()
+        val node = newTestNode()
         chain.add(node)
         chain.start()
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         assertEquals(listOf("onFinish"), events)
     }
+
+    @Test
+    fun testRunNodes() {
+        val events = mutableListOf<String>()
+        val chain = FChain()
+
+        chain.add(newTestNode(prefix = "1", events = events))
+        chain.add(newTestNode(prefix = "2", events = events))
+        chain.add(newTestNode(prefix = "3", events = events))
+        chain.start()
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+        listOf(
+            "1onRun", "1onFinish",
+            "2onRun", "2onFinish",
+            "3onRun", "3onFinish",
+        ).let { expectedEvents ->
+            assertEquals(expectedEvents, events)
+        }
+    }
 }
 
-private fun newRunnableNode(
-    onCancel: FChain.Node.() -> Unit = {},
+private fun newTestNode(
+    prefix: String = "",
+    events: MutableList<String> = mutableListOf(),
+    onCancel: FChain.Node .() -> Unit = {},
     onFinish: FChain.Node.() -> Unit = {},
     onRun: FChain.Node.() -> Unit = {},
 ): FChain.Node {
     return object : FChain.Node() {
         override fun onRun() {
+            events.add("${prefix}onRun")
             onRun.invoke(this)
             nextNode()
         }
 
         override fun onCancel() {
+            events.add("${prefix}onCancel")
             onCancel.invoke(this)
         }
 
         override fun onFinish() {
+            events.add("${prefix}onFinish")
             onFinish.invoke(this)
         }
     }

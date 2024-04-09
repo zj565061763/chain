@@ -14,7 +14,7 @@ class ChainTest {
     fun testAddNode() {
         val chain = FChain()
 
-        val node = newChainNode()
+        val node = newRunnableNode()
         chain.add(node)
 
         runCatching {
@@ -27,8 +27,9 @@ class ChainTest {
     @Test
     fun testStart() {
         val chain = FChain()
+        assertEquals(false, chain.isStarted())
 
-        val node = newChainNode()
+        val node = newRunnableNode()
         chain.add(node)
 
         assertEquals(true, chain.start())
@@ -49,7 +50,7 @@ class ChainTest {
             }
         }
 
-        val node = newChainNode()
+        val node = newRunnableNode()
         chain.add(node)
         chain.start()
 
@@ -58,7 +59,7 @@ class ChainTest {
     }
 }
 
-private fun newChainNode(
+private fun newRunnableNode(
     onCancel: FChain.Node.() -> Unit = {},
     onFinish: FChain.Node.() -> Unit = {},
     onRun: FChain.Node.() -> Unit = {},

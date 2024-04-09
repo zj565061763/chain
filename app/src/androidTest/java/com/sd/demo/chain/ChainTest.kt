@@ -95,7 +95,7 @@ class ChainTest {
     }
 
     @Test
-    fun testCancelAfterStart() {
+    fun testCancelAfterChainStart() {
         val events = mutableListOf<String>()
 
         val chain = object : FChain() {

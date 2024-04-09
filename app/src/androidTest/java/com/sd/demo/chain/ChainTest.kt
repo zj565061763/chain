@@ -1,5 +1,6 @@
 package com.sd.demo.chain
 
+import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.sd.lib.chain.FChain
@@ -109,21 +110,28 @@ private fun newTestNode(
 ): FChain.Node {
     return object : FChain.Node() {
         override fun onRun() {
+            checkMainLooper()
             events.add("${prefix}onRun")
             onRun.invoke(this)
             nextNode()
         }
 
         override fun onCancel() {
+            checkMainLooper()
             events.add("${prefix}onCancel")
             onCancel.invoke(this)
         }
 
         override fun onFinish() {
+            checkMainLooper()
             events.add("${prefix}onFinish")
             onFinish.invoke(this)
         }
     }
+}
+
+private fun checkMainLooper() {
+    check(Looper.myLooper() === Looper.getMainLooper())
 }
 
 private class TestErrorNextNode : FChain.Node() {

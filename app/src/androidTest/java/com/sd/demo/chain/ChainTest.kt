@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 class ChainTest {
 
     @Test
-    fun testAddNode() {
+    fun testErrorAddNode() {
         val chain = FChain()
 
         val node = newTestNode()

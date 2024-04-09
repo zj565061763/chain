@@ -29,8 +29,7 @@ class ChainTest {
         val chain = FChain()
         assertEquals(false, chain.isStarted())
 
-        val node = newTestNode()
-        chain.add(node)
+        chain.add(newTestNode())
 
         assertEquals(true, chain.start())
         assertEquals(false, chain.start())
@@ -50,8 +49,7 @@ class ChainTest {
             }
         }
 
-        val node = newTestNode()
-        chain.add(node)
+        chain.add(newTestNode())
         chain.start()
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()

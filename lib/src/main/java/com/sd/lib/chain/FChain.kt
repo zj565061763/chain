@@ -122,7 +122,7 @@ open class FChain {
         }
 
         internal fun notifyRun() {
-            check(_state == NodeState.None)
+            check(_state == NodeState.None) { "Require state None." }
             _state = NodeState.Run
             _handler.post {
                 synchronized(_chain) {

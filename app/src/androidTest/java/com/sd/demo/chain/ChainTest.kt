@@ -99,6 +99,29 @@ class ChainTest {
             assertEquals(expectedEvents, events)
         }
     }
+
+    @Test
+    fun testCancelOnRun() {
+        val events = mutableListOf<String>()
+        val chain = FChain()
+
+        chain.add(newTestNode(prefix = "1", events = events))
+        chain.add(newTestNode(prefix = "2", events = events) {
+            // cancel
+            chain.cancel()
+        })
+        chain.add(newTestNode(prefix = "3", events = events))
+        chain.start()
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+        listOf(
+            "1onRun", "1onFinish",
+            "2onRun", "2onCancel", "2onFinish",
+        ).let { expectedEvents ->
+            assertEquals(expectedEvents, events)
+        }
+    }
 }
 
 private fun newTestNode(

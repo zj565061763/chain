@@ -39,10 +39,13 @@ open class FChain {
         if (_currentNode != null) return false
         if (_nodes.isEmpty()) return false
 
-        _nodes[0].also {
+        val firstNode = _nodes[0].also {
             _currentIndex = 0
             _currentNode = it
-        }.notifyRun()
+        }
+
+        _handler.post { onStart() }
+        firstNode.notifyRun()
         return true
     }
 
@@ -79,6 +82,11 @@ open class FChain {
         _nodes.clear()
         _handler.post { onFinish() }
     }
+
+    /**
+     * 开始回调，主线程触发
+     */
+    protected open fun onStart() = Unit
 
     /**
      * 结束回调，主线程触发

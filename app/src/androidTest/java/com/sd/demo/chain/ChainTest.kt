@@ -41,23 +41,6 @@ class ChainTest {
     }
 
     @Test
-    fun testOnFinish() {
-        val events = mutableListOf<String>()
-
-        val chain = object : FChain() {
-            override fun onFinish() {
-                events.add("onFinish")
-            }
-        }
-
-        chain.add(newTestNode())
-        chain.start()
-
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-        assertEquals(listOf("onFinish"), events)
-    }
-
-    @Test
     fun testErrorNextNode() {
         val chain = FChain()
 
@@ -82,7 +65,12 @@ class ChainTest {
     @Test
     fun testRunNodes() {
         val events = mutableListOf<String>()
+
         val chain = object : FChain() {
+            override fun onStart() {
+                events.add("onStart")
+            }
+
             override fun onFinish() {
                 events.add("onFinish")
             }
@@ -96,6 +84,7 @@ class ChainTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         listOf(
+            "onStart",
             "1onRun", "1onFinish",
             "2onRun", "2onFinish",
             "3onRun", "3onFinish",
@@ -108,7 +97,12 @@ class ChainTest {
     @Test
     fun testCancelAfterStart() {
         val events = mutableListOf<String>()
+
         val chain = object : FChain() {
+            override fun onStart() {
+                events.add("onStart")
+            }
+
             override fun onFinish() {
                 events.add("onFinish")
             }
@@ -122,13 +116,23 @@ class ChainTest {
         chain.cancel()
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
-        assertEquals(listOf("onFinish"), events)
+        listOf(
+            "onStart",
+            "onFinish",
+        ).let { expectedEvents ->
+            assertEquals(expectedEvents, events)
+        }
     }
 
     @Test
     fun testCancelOnRun() {
         val events = mutableListOf<String>()
+
         val chain = object : FChain() {
+            override fun onStart() {
+                events.add("onStart")
+            }
+
             override fun onFinish() {
                 events.add("onFinish")
             }
@@ -145,6 +149,7 @@ class ChainTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         listOf(
+            "onStart",
             "1onRun", "1onFinish",
             "2onRun", "2onCancel", "2onFinish",
             "onFinish",
@@ -156,7 +161,12 @@ class ChainTest {
     @Test
     fun testCancelOnFinish() {
         val events = mutableListOf<String>()
+
         val chain = object : FChain() {
+            override fun onStart() {
+                events.add("onStart")
+            }
+
             override fun onFinish() {
                 events.add("onFinish")
             }
@@ -173,6 +183,7 @@ class ChainTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         listOf(
+            "onStart",
             "1onRun", "1onFinish",
             "2onRun", "2onFinish",
             "onFinish",

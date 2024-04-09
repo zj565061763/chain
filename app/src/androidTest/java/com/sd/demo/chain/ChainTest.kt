@@ -57,6 +57,26 @@ class ChainTest {
     }
 
     @Test
+    fun testErrorNextNode() {
+        val chain = FChain()
+
+        val node = TestErrorNextNode()
+
+        runCatching {
+            node.testRunNextNode()
+        }.let { result ->
+            assertEquals("Node has not been initialized.", result.exceptionOrNull()!!.message)
+        }
+
+        chain.add(node)
+        runCatching {
+            node.testRunNextNode()
+        }.let { result ->
+            assertEquals("Can not call nextNode() before onRun().", result.exceptionOrNull()!!.message)
+        }
+    }
+
+    @Test
     fun testRunNodes() {
         val events = mutableListOf<String>()
         val chain = FChain()
@@ -101,5 +121,16 @@ private fun newTestNode(
             events.add("${prefix}onFinish")
             onFinish.invoke(this)
         }
+    }
+}
+
+private class TestErrorNextNode : FChain.Node() {
+
+    fun testRunNextNode() {
+        nextNode()
+    }
+
+    override fun onRun() {
+
     }
 }

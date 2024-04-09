@@ -87,8 +87,8 @@ class ChainTest {
         chain.add(newTestNode(prefix = "1", events = events))
         chain.add(newTestNode(prefix = "2", events = events))
         chain.add(newTestNode(prefix = "3", events = events))
-        chain.start()
 
+        chain.start()
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         listOf(
@@ -111,7 +111,6 @@ class ChainTest {
 
         chain.start()
         chain.cancel()
-
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         assertEquals(0, events.size)
@@ -123,18 +122,41 @@ class ChainTest {
         val chain = FChain()
 
         chain.add(newTestNode(prefix = "1", events = events))
-        chain.add(newTestNode(prefix = "2", events = events) {
+        chain.add(newTestNode(prefix = "2", events = events, onRun = {
             // cancel
             chain.cancel()
-        })
+        }))
         chain.add(newTestNode(prefix = "3", events = events))
-        chain.start()
 
+        chain.start()
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         listOf(
             "1onRun", "1onFinish",
             "2onRun", "2onCancel", "2onFinish",
+        ).let { expectedEvents ->
+            assertEquals(expectedEvents, events)
+        }
+    }
+
+    @Test
+    fun testCancelOnFinish() {
+        val events = mutableListOf<String>()
+        val chain = FChain()
+
+        chain.add(newTestNode(prefix = "1", events = events))
+        chain.add(newTestNode(prefix = "2", events = events, onFinish = {
+            // cancel
+            chain.cancel()
+        }))
+        chain.add(newTestNode(prefix = "3", events = events))
+
+        chain.start()
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+        listOf(
+            "1onRun", "1onFinish",
+            "2onRun", "2onFinish",
         ).let { expectedEvents ->
             assertEquals(expectedEvents, events)
         }

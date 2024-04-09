@@ -68,7 +68,9 @@ class ChainTest {
             assertEquals("Node has not been initialized.", result.exceptionOrNull()!!.message)
         }
 
+        // init node
         chain.add(node)
+
         runCatching {
             node.testRunNextNode()
         }.let { result ->

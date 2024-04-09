@@ -34,6 +34,10 @@ class ChainTest {
 
         assertEquals(true, chain.start())
         assertEquals(false, chain.start())
+
+        assertEquals(true, chain.isStarted())
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        assertEquals(false, chain.isStarted())
     }
 
     @Test

@@ -16,6 +16,12 @@ open class FChain {
     private val _handler = Handler(Looper.getMainLooper())
 
     /**
+     * 是否已经启动
+     */
+    @Synchronized
+    fun isStarted(): Boolean = _currentNode != null
+
+    /**
      * 添加节点，一个节点对象只能被添加一次
      */
     @Synchronized

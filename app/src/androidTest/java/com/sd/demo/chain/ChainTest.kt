@@ -82,7 +82,11 @@ class ChainTest {
     @Test
     fun testRunNodes() {
         val events = mutableListOf<String>()
-        val chain = FChain()
+        val chain = object : FChain() {
+            override fun onFinish() {
+                events.add("onFinish")
+            }
+        }
 
         chain.add(newTestNode(prefix = "1", events = events))
         chain.add(newTestNode(prefix = "2", events = events))
@@ -95,6 +99,7 @@ class ChainTest {
             "1onRun", "1onFinish",
             "2onRun", "2onFinish",
             "3onRun", "3onFinish",
+            "onFinish",
         ).let { expectedEvents ->
             assertEquals(expectedEvents, events)
         }
@@ -103,7 +108,11 @@ class ChainTest {
     @Test
     fun testCancelAfterStart() {
         val events = mutableListOf<String>()
-        val chain = FChain()
+        val chain = object : FChain() {
+            override fun onFinish() {
+                events.add("onFinish")
+            }
+        }
 
         chain.add(newTestNode(prefix = "1", events = events))
         chain.add(newTestNode(prefix = "2", events = events))
@@ -113,13 +122,17 @@ class ChainTest {
         chain.cancel()
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
-        assertEquals(0, events.size)
+        assertEquals(listOf("onFinish"), events)
     }
 
     @Test
     fun testCancelOnRun() {
         val events = mutableListOf<String>()
-        val chain = FChain()
+        val chain = object : FChain() {
+            override fun onFinish() {
+                events.add("onFinish")
+            }
+        }
 
         chain.add(newTestNode(prefix = "1", events = events))
         chain.add(newTestNode(prefix = "2", events = events, onRun = {
@@ -134,6 +147,7 @@ class ChainTest {
         listOf(
             "1onRun", "1onFinish",
             "2onRun", "2onCancel", "2onFinish",
+            "onFinish",
         ).let { expectedEvents ->
             assertEquals(expectedEvents, events)
         }
@@ -142,7 +156,11 @@ class ChainTest {
     @Test
     fun testCancelOnFinish() {
         val events = mutableListOf<String>()
-        val chain = FChain()
+        val chain = object : FChain() {
+            override fun onFinish() {
+                events.add("onFinish")
+            }
+        }
 
         chain.add(newTestNode(prefix = "1", events = events))
         chain.add(newTestNode(prefix = "2", events = events, onFinish = {
@@ -157,6 +175,7 @@ class ChainTest {
         listOf(
             "1onRun", "1onFinish",
             "2onRun", "2onFinish",
+            "onFinish",
         ).let { expectedEvents ->
             assertEquals(expectedEvents, events)
         }

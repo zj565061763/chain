@@ -101,6 +101,23 @@ class ChainTest {
     }
 
     @Test
+    fun testCancelAfterStart() {
+        val events = mutableListOf<String>()
+        val chain = FChain()
+
+        chain.add(newTestNode(prefix = "1", events = events))
+        chain.add(newTestNode(prefix = "2", events = events))
+        chain.add(newTestNode(prefix = "3", events = events))
+
+        chain.start()
+        chain.cancel()
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+        assertEquals(0, events.size)
+    }
+
+    @Test
     fun testCancelOnRun() {
         val events = mutableListOf<String>()
         val chain = FChain()

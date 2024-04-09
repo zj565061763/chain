@@ -28,8 +28,11 @@ class MainActivity : AppCompatActivity() {
     private fun startChain() {
         if (_chain != null) return
         object : FChain() {
+            override fun onStart() {
+                logMsg { "chain onStart ${Thread.currentThread().name}" }
+            }
+
             override fun onFinish() {
-                super.onFinish()
                 _chain = null
                 logMsg { "chain onFinish ${Thread.currentThread().name}" }
             }

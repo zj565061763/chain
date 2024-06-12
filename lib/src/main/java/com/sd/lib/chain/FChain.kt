@@ -36,7 +36,7 @@ open class FChain {
      */
     @Synchronized
     fun start(): Boolean {
-        if (_currentNode != null) return false
+        if (isStarted()) return false
         if (_nodes.isEmpty()) return false
 
         val firstNode = _nodes[0].also {

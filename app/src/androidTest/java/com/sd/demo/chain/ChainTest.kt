@@ -12,6 +12,14 @@ import org.junit.runner.RunWith
 class ChainTest {
 
     @Test
+    fun testSize() {
+        val chain = FChain()
+        chain.add(newTestNode())
+        chain.add(newTestNode())
+        assertEquals(2, chain.size())
+    }
+
+    @Test
     fun testErrorAddNode() {
         val chain = FChain()
 

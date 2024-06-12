@@ -9,7 +9,7 @@ open class FChain {
     private val _nodes: MutableList<Node> = mutableListOf()
 
     /** 当前执行的节点位置  */
-    private var _currentIndex = -1
+    private var _currentIndex: Int = -1
     /** 当前执行的节点  */
     private var _currentNode: Node? = null
 
@@ -20,6 +20,12 @@ open class FChain {
      */
     @Synchronized
     fun isStarted(): Boolean = _currentNode != null
+
+    /**
+     * 节点数量
+     */
+    @Synchronized
+    fun size(): Int = _nodes.size
 
     /**
      * 添加节点，一个节点对象只能被添加一次
